@@ -1,7 +1,6 @@
 from Databases import MethodValidationDatabase
 import json
 from os import chdir, listdir
-import re
 
 
 class Project:

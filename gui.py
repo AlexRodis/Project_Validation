@@ -1,125 +1,14 @@
 from tkinter import Tk, Button, Frame, Label, mainloop, Checkbutton, StringVar, BooleanVar, Entry,Radiobutton
 from collections import namedtuple,defaultdict
-from time import time
 from Project import Validation
 from Databases import Database
 from os import chdir
-
-# class Screen(object):
-#     def __init__(self):
-#         return None
-
-#     def utils_geometry(*args):
-#         from maths import modf
-#         def utils_stats(val,mod):
-#             return modf(val*mod)
-#         return str(utils_stats(*args[0],args[1])).join(str(utils_stats(args[2],args[3])))
+from Packages.Utils import InputUtils
 
 # Pesticides in Honey
 # Κατερίνα Κορωνία, Αλέξανδρος Ρόδης, Αποστόλης Καραγιαννίδης,Γιώργος Κουλής, Νικόλαος Θωμαΐδης
 # H:\Pesticides Honey\Results\GC\Method Validation\Excel Exports
 # C:\Users\User\Desktop\HoneyPesticides
-
-class InputUtils:
-
-    @staticmethod
-    def convert_input(string,typ=None):
-    #Takes user input "levels, conc values sepperated by commas and converts them into a list of values"
-    #Types to convert int_num,float_num,string
-        try:
-            if typ is not None:
-                if typ is 'int_num':
-                    inp=string.replace(" ","")
-                    inp=string.split(",")
-                    inp=[int(i) for i in inp]
-                elif typ is 'float_num':
-                    inp=string.replace(" ","")
-                    inp=string.split(",")
-                    inp=[float(i) for i in inp]
-                elif typ is 'string':
-                    inp=string.split(",")
-            else:
-                raise TypeError
-        except TypeError:
-            print("Invalid Input type to convert")
-        return tuple(inp)
-
-
-
-    @staticmethod
-    def input_to_nums(string, typ=None):
-        try:
-            if typ is not None:
-                if typ is 'float':
-                    c = [float(x) for x in string.split(',')]
-                if typ is 'int':
-                    c = [int(x) for x in string.split(',')]
-            else:
-                raise ValueError
-        except ValueError:
-            print('Input type not defined')
-        return c
-
-
-    def aggregator(*args):
-        final = args[0] + args[1] + args[2]
-        final = dict.fromkeys(final)
-        final = list(final)
-        final.sort()
-        return final
-
-
-    def mapper(c_pts=None, R_pts=None, r_pts=None, R_repeats=None, r_repeats=None, zipR=None, zipr=None, aggregated=None):
-        masterlist = []
-        for idx, lvl in enumerate(aggregated, start=1):
-            c = [idx, lvl]
-            if lvl in c_pts:
-                c.append(True)
-            else:
-                c.append(False)
-            if lvl in R_pts:
-                for item in zipR:
-                    if lvl == item['concentration']:
-                        c.append([True, item['repeats']])
-            else:
-                c.append([False, None])
-            if lvl in r_pts:
-                for item in zipr:
-                    if lvl == item['concentration']:
-                        c.append([True, item['repeats']])
-            else:
-                c.append([False, None])
-            masterlist.append(c)
-        return masterlist
-
-    @staticmethod
-    def interpret_input(*args):
-        """Receives user input in order Curve Points, Repeatability Points, Within Laboratory Reproducibility Points, Repeatability repeats per level, Within Laboratory Reproducibility repeats"""
-        finallist = []
-        v = []
-        c = []
-        for i in range(5):
-            if i < 3:
-                finallist.append(InputUtils.input_to_nums(args[i], typ='float'))
-            else:
-                finallist.append(InputUtils.input_to_nums(args[i], typ='int'))
-        finallist.append(list(zip(finallist[1], finallist[3])))
-        finallist.append(list(zip(finallist[2], finallist[4])))
-        for concentration, repeats in finallist[5]:
-            v.append({'concentration': concentration, 'repeats': repeats})
-        finallist[5] = v
-        for concentration, repeats in finallist[6]:
-            c.append({'concentration': concentration, 'repeats': repeats})
-        finallist[6] = c
-        finallist.append(InputUtils.aggregator(finallist[0], finallist[1], finallist[2]))
-        ret = InputUtils.mapper(c_pts=finallist[0], R_pts=finallist[1], r_pts=finallist[2], R_repeats=finallist[3],
-                     r_repeats=finallist[4], zipR=finallist[5], zipr=finallist[6], aggregated=finallist[7])
-        masterlist = []
-        for item in ret:
-            masterlist.append( {'spike_index':item[0], 'spike_level':item[1], 'Is_In_Curve':item[2],
-                                        'RepeatabilityandRepeats':item[3], 'InterLabReproducibilityandRepeats':item[4]})
-        return masterlist
-
 
 
 
