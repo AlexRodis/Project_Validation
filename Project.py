@@ -1,7 +1,7 @@
 from Databases import MethodValidationDatabase
 import json
 from os import chdir, listdir
-
+from Packages.Utils import JSONAdaptor
 
 class Project:
 
@@ -44,7 +44,6 @@ class Validation(Project):
         return None
 
     def __init__(self, settings=None, root=None):
-        print(settings)
         super().__init__(settings['project_parameters']['name'], settings['project_parameters']['team'],
                          settings['project_parameters']['datapath'], settings['project_parameters']['filepath'], root)
         self.validation_settings = settings
@@ -64,26 +63,10 @@ class Validation(Project):
         self.database.create_table(
             table='validation', settings=self.validation_settings, to_do=self.to_do)
 
-# Doesn't work. For some reason settings aren't being written to a file. Look at desktop. Currently writes null
     @staticmethod
-    def save(settings=None, filepath=None):
+    def Save(settings=None, filepath=None):
         chdir(filepath)
-        print(settings)
-        try:
-            print('Attempting to open file')
-            with open('Settings-User.json', 'w') as file:
-                json.dump(settings['advanced_settings'], file)
-                print('File opened')
-        except:
-            try:
-                print('Attempting to create file')
-                f = open('testsettings.json', 'x')
-                f.close()
-                print('file created')
-                print('Attempting to write to file')
-                with open('testsettings.json', 'r+') as file:
-                    json.dump(settings['advanced_settings'], file)
-                    print('Dumping json')
-                print('Wrote to file')
-            except:
-                print("Failed to create settings file")
+        settings = JSONAdaptor.pythontojson(settings)
+        with open("Settings-User.json", "w+") as file:
+            json.dump(settings, file, indent=4)
+        return None

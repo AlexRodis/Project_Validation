@@ -1,148 +1,175 @@
 {
- "c_settings": {
-  "Validation_Parameters": {
-   "STD_Curve": {
-    "Points_In_Curve": [
-     2.0,
-     5.0,
-     20.0,
-     50.0,
-     100.0
-    ],
-    "Repeatability_Sampling": [
-     [
-      2.0,
-      3
-     ],
-     [
-      20.0,
-      3
-     ],
-     [
-      100.0,
-      3
-     ]
-    ],
-    "Within_Laboratory_Reproducibility_Sampling": [
-     [
-      2.0,
-      3
-     ],
-     [
-      20.0,
-      3
-     ],
-     [
-      100.0,
-      3
-     ]
-    ]
-   },
-   "Spike_Curve": {
-    "Points_In_Curve": [
-     2.0,
-     5.0,
-     20.0,
-     50.0,
-     100.0
-    ],
-    "Repeatability_Sampling": [
-     [
-      [
-       2.0,
-       3
-      ],
-      [
-       20.0,
-       3
-      ],
-      [
-       100.0,
-       3
-      ]
-     ]
-    ],
-    "Within_Laboratory_Reproducibility_Sampling": [
-     [
-      [
-       2.0,
-       3
-      ],
-      [
-       20.0,
-       3
-      ],
-      [
-       100.0,
-       3
-      ]
-     ]
-    ]
-   },
-   "Matrix_Curve": {
-    "Points_In_Curve": [
-     2.0,
-     5.0,
-     20.0,
-     50.0,
-     100.0
-    ],
-    "Repeatability_Sampling": [
-     [
-      [
-       2.0,
-       3
-      ],
-      [
-       20.0,
-       3
-      ],
-      [
-       100.0,
-       3
-      ]
-     ]
-    ],
-    "Within_Laboratory_Reproducibility_Sampling": [
-     [
-      [
-       2.0,
-       3
-      ],
-      [
-       20.0,
-       3
-      ],
-      [
-       100.0,
-       3
-      ]
-     ]
-    ]
-   }
-  }
- },
- "base_params": {
-  "to_do": [
-   [
-    "STD",
-    false,
-    false
-   ],
-   [
-    "Spike",
-    true,
-    true
-   ],
-   [
-    "MatrixMatch",
-    false,
-    false
-   ]
-  ],
-  "name": "dfsdf",
-  "team_members": "sdfsdfdsf",
-  "filepath": "sdfsdfsdf",
-  "export_path": "sdfdf"
- }
+    "advanced_settings": {
+        "format_settings": {
+            "curve_headings": null,
+            "analyte_heading": [
+                "Times New Roman",
+                "",
+                "Black",
+                "None"
+            ],
+            "column_heading": [
+                "Times New Roman",
+                "12",
+                "Black",
+                "None"
+            ],
+            "data_headings": null,
+            "sample": null,
+            "blanc": null,
+            "curve_heading": [
+                "Times New Roman",
+                "13",
+                "14",
+                "None"
+            ],
+            "data_heading": [
+                "Times New Roman",
+                "10",
+                "Black",
+                "None"
+            ],
+            "sample_heading": [
+                "",
+                "",
+                "",
+                ""
+            ],
+            "blank_heading": [
+                "Times New Roman",
+                "13",
+                "Black",
+                "None"
+            ]
+        },
+        "advanced_curve_settings": {
+            "STD": {
+                "curve_points": [
+                    2.0,
+                    5.0,
+                    20.0,
+                    100.0
+                ],
+                "RepeatabilityandRepeats": [
+                    [
+                        2.0,
+                        3
+                    ],
+                    [
+                        20.0,
+                        3
+                    ],
+                    [
+                        100.0,
+                        3
+                    ]
+                ],
+                "InterLabReproducibilityandRepeats": [
+                    [
+                        2.0,
+                        3
+                    ],
+                    [
+                        20.0,
+                        3
+                    ],
+                    [
+                        100.0,
+                        3
+                    ]
+                ]
+            },
+            "Spike": {
+                "curve_points": [
+                    2.0,
+                    5.0,
+                    20.0,
+                    50.0,
+                    100.0
+                ],
+                "RepeatabilityandRepeats": [
+                    [
+                        2.0,
+                        3
+                    ],
+                    [
+                        20.0,
+                        3
+                    ],
+                    [
+                        100.0,
+                        3
+                    ]
+                ],
+                "InterLabReproducibilityandRepeats": [
+                    [
+                        2.0,
+                        3
+                    ],
+                    [
+                        20.0,
+                        3
+                    ],
+                    [
+                        100.0,
+                        3
+                    ]
+                ]
+            },
+            "Matrix": {
+                "curve_points": [
+                    2.0,
+                    5.0,
+                    20.0,
+                    50.0,
+                    100.0
+                ],
+                "RepeatabilityandRepeats": [
+                    [
+                        2.0,
+                        3
+                    ],
+                    [
+                        20.0,
+                        3
+                    ],
+                    [
+                        100.0,
+                        3
+                    ]
+                ],
+                "InterLabReproducibilityandRepeats": [
+                    [
+                        2.0,
+                        3
+                    ],
+                    [
+                        20.0,
+                        3
+                    ],
+                    [
+                        100.0,
+                        3
+                    ]
+                ]
+            }
+        }
+    },
+    "basic_settings": {
+        "STD": {
+            "Curve": true,
+            "Repeatability": false,
+            "Reproducibility": false
+        },
+        "Spike": {
+            "Curve": true,
+            "Repeatability": true,
+            "Reproducibility": true
+        },
+        "Matrix": {
+            "Curve": true,
+            "Repeatability": false,
+            "Reproducibility": false
+        }
+    }
 }

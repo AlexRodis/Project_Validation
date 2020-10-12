@@ -241,7 +241,6 @@ class MethodValidationSettingsScreen(InputUtils):
         settings['advanced_settings']['format_settings']['data_heading']=Format(font=self.dataformat_fontentry.get(),size=self.dataformat_szentry.get(),font_color=self.dataformat_fontcolorentry.get(),fill=self.dataformat_fillentry.get())
         settings['advanced_settings']['format_settings']['sample_heading']=Format(font=self.sampleformat_fontentry.get(),size=self.sampleformat_szentry.get(),font_color=self.sampleformat_fontcolorentry.get(),fill=self.sampleformat_fillentry.get())
         settings['advanced_settings']['format_settings']['blank_heading']=Format(font=self.blankformat_fontentry.get(),size=self.blankformat_szentry.get(),font_color=self.blankformat_fontcolorentry.get(),fill=self.blankformat_fillentry.get())
-        print(settings)
         return settings
 
 
@@ -508,7 +507,7 @@ class MethodValidationSettingsScreen(InputUtils):
         self.btn_ok.place(relx=.15,rely=c_title_y+.65)
         self.btn_cnl=Button(self.root.mainframe,text="Cancel",font=(letterfont,12),command=self.root.quit)
         self.btn_cnl.place(relx=.35,rely=c_title_y+.65)
-        self.btn_sv=Button(self.root.mainframe,text="Save",font=(letterfont,12),command=lambda: Validation.save(settings=self.collect_settings(settings),filepath=settings['project_parameters']['filepath']))
+        self.btn_sv=Button(self.root.mainframe,text="Save",font=(letterfont,12),command=lambda: Validation.Save(settings=self.collect_settings(settings),filepath=settings['project_parameters']['filepath']))
         self.btn_sv.place(relx=.55,rely=c_title_y+.65)
         self.btn_ext=Button(self.root.mainframe,text="Exit",font=(letterfont,12),command=self.root.quit)
         self.btn_ext.place(relx=.75,rely=c_title_y+.65)
