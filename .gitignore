@@ -8,3 +8,4 @@ regexassist.py
 Settings.json
 testing.json
 unittesting.py
+*.pyc
