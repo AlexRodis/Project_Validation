@@ -140,7 +140,7 @@ class MethodValidationScreen(InputUtils):
         var_matrix_r = BooleanVar()
         var_auto = BooleanVar()
         statevars = [var_std, var_std_R, var_std_r, var_spike, var_spike_R,
-                     var_spike_r, var_matrix, var_matrix_R, var_spike_r, var_auto]
+                     var_spike_r, var_matrix, var_matrix_R, var_matrix_r, var_auto]
         self.root.mainframe = Frame(self.root, bg='navyblue')
         self.root.mainframe.place(relx=0, rely=0, relheight=1, relwidth=1)
         self.label_title = Label(
@@ -234,7 +234,7 @@ class MethodValidationSettingsScreen(InputUtils):
 
         settings['advanced_settings']['advanced_curve_settings']['STD'] = InputUtils.interpret_input(self.stdcpts.get(),self.stdRlvlsentry.get(),self.stdrlvlsentry.get(),self.stdRrepeatsperlevelentry.get(),self.stdrrepeatsperlevelentry.get())
         settings['advanced_settings']['advanced_curve_settings']['Spike']=InputUtils.interpret_input(self.spikecpts.get(),self.spikeRlvlsentry.get(),self.spikerlvlsentry.get(),self.spikeRrepeatsperlevelentry.get(),self.spikerrepeatsperlevelentry.get())
-        settings['advanced_settings']['advanced_curve_settings']['Matrix']=InputUtils.interpret_input(self.spikecpts.get(),self.spikeRlvlsentry.get(),self.spikerlvlsentry.get(),self.spikeRrepeatsperlevelentry.get(),self.spikerrepeatsperlevelentry.get())
+        settings['advanced_settings']['advanced_curve_settings']['Matrix']=InputUtils.interpret_input(self.matrixcpts.get(),self.matrixRlvlsentry.get(),self.matrixrlvlsentry.get(),self.matrixRrepeatsperlevelentry.get(),self.matrixrrepeatsperlevelentry.get())
         settings['advanced_settings']['format_settings']['curve_heading']=Format(font=self.curvesformat_fontentry.get(),size=self.curvesformat_szentry.get(),font_color=self.curvesformat_fontcolorentry.get(),fill=self.curvesformat_fillentry.get())
         settings['advanced_settings']['format_settings']['analyte_heading']=Format(font=self.analyteformat_fontentry.get(),size=self.analyteformat_szentry.get(),font_color=self.analyteformat_fontcolorentry.get(),fill=self.analyteformat_fillentry.get())
         settings['advanced_settings']['format_settings']['column_heading']=Format(font=self.columnformat_fontentry.get(),size=self.columnformat_szentry.get(),font_color=self.columnformat_fontcolorentry.get(),fill=self.columnformat_fillentry.get())
@@ -338,14 +338,12 @@ class MethodValidationSettingsScreen(InputUtils):
             relx=.18, rely=c_title_y + 0.134)
         self.stdRrepeatsperlevelentry = Entry(
             self.root.mainframe)
-        self.stdRrepeatsperlevelentry
         self.stdRrepeatsperlevelentry.place(relx=.195, rely=c_title_y + 0.168)
         self.stdrlvlsentry = Entry(self.root.mainframe)
         self.stdrlvlsentry.place(
             relx=.21, rely=c_title_y + 0.212)
         self.stdrrepeatsperlevelentry = Entry(
             self.root.mainframe)
-        self.stdrrepeatsperlevelentry
         self.stdrrepeatsperlevelentry.place(relx=.21, rely=c_title_y + .265)
         # Spike Entries
         self.spikeRlvlsentry = Entry(self.root.mainframe)
@@ -353,15 +351,12 @@ class MethodValidationSettingsScreen(InputUtils):
             relx=.55, rely=c_title_y + 0.134)
         self.spikeRrepeatsperlevelentry = Entry(
             self.root.mainframe)
-        self.spikeRrepeatsperlevelentry
         self.spikeRrepeatsperlevelentry.place(relx=.55, rely=c_title_y + 0.168)
         self.spikerlvlsentry = Entry(self.root.mainframe)
-        self.spikerlvlsentry
         self.spikerlvlsentry.place(
             relx=.55, rely=c_title_y + 0.212)
         self.spikerrepeatsperlevelentry = Entry(
             self.root.mainframe)
-        self.spikerrepeatsperlevelentry
         self.spikerrepeatsperlevelentry.place(relx=.55, rely=c_title_y + .265)
         # Matrix Entries
         self.matrixRlvlsentry = Entry(self.root.mainframe)
@@ -397,9 +392,9 @@ class MethodValidationSettingsScreen(InputUtils):
         self.curvesformat_fontentry=Entry(self.root.mainframe)
         self.curvesformat_fontentry.place(relx=.08,rely=c_title_y+.425)
         self.curvesformat_szentry=Entry(self.root.mainframe)
-        self.curvesformat_szentry.place(relx=.08,rely=c_title_y+.475)
+        self.curvesformat_szentry.place(relx=.08,rely=c_title_y+.45)
         self.curvesformat_fontcolorentry=Entry(self.root.mainframe)
-        self.curvesformat_fontcolorentry.place(relx=.08,rely=c_title_y+.45)
+        self.curvesformat_fontcolorentry.place(relx=.08,rely=c_title_y+.475)
         self.curvesformat_fillentry=Entry(self.root.mainframe)
         self.curvesformat_fillentry.place(relx=.08,rely=c_title_y+.5)
     #Analyte Heading

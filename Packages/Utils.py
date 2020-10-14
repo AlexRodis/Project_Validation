@@ -1,9 +1,12 @@
 import copy
+from collections import namedtuple
 
 
 class JSONAdaptor:
+
     @staticmethod
     def pythontojson(arg):
+        # Needs a rewrite without deepcopy
         arg_cp = copy.deepcopy(arg)
         del arg_cp['basic_settings']
         del arg_cp['advanced_settings']['advanced_curve_settings']
@@ -34,9 +37,7 @@ class JSONAdaptor:
         # Convert json to python
         """Receives user input in order Curve Points, Repeatability Points, Within Laboratory Reproducibility Points, Repeatability repeats per level, Within Laboratory Reproducibility repeats"""
         arg_cp = {'basic_settings': [], 'advanced_settings': None}
-        arg_cp['advanced_settings'] = None
-        arg_cp['advanced_settings'] = {'advanced_curve_settings': None}
-        arg_cp['advanced_settings']['advanced_curve_settings'] = {}
+        arg_cp['advanced_settings'] = {'advanced_curve_settings': {}}
         Base_Parameters = namedtuple(
             "Base_Parameters", 'Curve,Repeatability,Reproducibility')
 
@@ -45,22 +46,21 @@ class JSONAdaptor:
                                                             [item]['Repeatability'], Reproducibility=arg['basic_settings'][item]['Reproducibility']))
 
         for curve in arg['advanced_settings']['advanced_curve_settings']:
-            arg_cp['advanced_settings']['advanced_curve_settings'] = {
-                curve: None}
+            arg_cp['advanced_settings']['advanced_curve_settings'][curve] = None
             x = arg['advanced_settings']['advanced_curve_settings'][curve]['curve_points']
             y = [x[0] for x in arg['advanced_settings']
-                 ['advanced_curve_settings'][curve]['Repeatability']]
+                 ['advanced_curve_settings'][curve]['RepeatabilityandRepeats']]
             z = [x[1] for x in arg['advanced_settings']
-                 ['advanced_curve_settings'][curve]['Repeatability']]
+                 ['advanced_curve_settings'][curve]['RepeatabilityandRepeats']]
             f = [x[0] for x in arg['advanced_settings']
-                 ['advanced_curve_settings'][curve]['Reproducibility']]
+                 ['advanced_curve_settings'][curve]['InterLabReproducibilityandRepeats']]
             o = [x[1] for x in arg['advanced_settings']
-                 ['advanced_curve_settings'][curve]['Reproducibility']]
+                 ['advanced_curve_settings'][curve]['InterLabReproducibilityandRepeats']]
             arg_cp['advanced_settings']['advanced_curve_settings'][curve] = InputUtils.interpret_input(
                 x, y, f, z, o)
 
-        arg.update(arg_cp)
-        return arg
+        arg_cp['advanced_settings']['format_settings'] = arg['advanced_settings']['format_settings']
+        return arg_cp
 
 class InputUtils:
 

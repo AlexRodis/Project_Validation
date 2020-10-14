@@ -28,13 +28,13 @@ class Validation(Project):
             if self.validation_settings['advanced_validation_settings'] is None:
                 try:
                     with open('Settings-User.json', 'r') as settings:
-                        self.validation_settings['advanced_validation_settings'] = json.read(
-                            settings)
+                        self.validation_settings['advanced_validation_settings'] = JSONAdaptor.jsontopython(json.load(
+                            settings))
                 except FileNotFoundError:
                     try:
                         with open('Settings-Default.json', 'r') as settings:
-                            self.validation_settings['advanced_validation_settings'] = json.read(
-                                settings)
+                            self.validation_settings['advanced_validation_settings'] = JSONAdaptor.jsontopython(json.load(
+                                settings))
                     except FileNotFoundError:
                         print("Validation settings not found")
             else:
@@ -67,6 +67,6 @@ class Validation(Project):
     def Save(settings=None, filepath=None):
         chdir(filepath)
         settings = JSONAdaptor.pythontojson(settings)
-        with open("Settings-User.json", "w+") as file:
+        with open("Settings-User.json", "w") as file:
             json.dump(settings, file, indent=4)
         return None

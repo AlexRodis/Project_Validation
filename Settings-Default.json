@@ -20,7 +20,7 @@
             "curve_heading": [
                 "Times New Roman",
                 "13",
-                "14",
+                "",
                 "None"
             ],
             "data_heading": [
@@ -37,7 +37,7 @@
             ],
             "blank_heading": [
                 "Times New Roman",
-                "13",
+                "12",
                 "Black",
                 "None"
             ]
@@ -48,6 +48,7 @@
                     2.0,
                     5.0,
                     20.0,
+                    50.0,
                     100.0
                 ],
                 "RepeatabilityandRepeats": [
