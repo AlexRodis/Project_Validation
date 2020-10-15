@@ -184,10 +184,10 @@ class MethodValidationScreen(InputUtils):
             self.root.mainframe, text="Advanced Settings", font=intro_font, command=lambda: MethodValidationSettingsScreen(self.root,MethodValidationScreen.get_state(settings,statevars)))
         self.btn_advanced.place(relx=0.3, rely=0.9)
         self.btn_exit = Button(
-            self.root.mainframe, text="Back", font=intro_font, command=self.root.quit)
+            self.root.mainframe, text="Exit", font=intro_font, command=self.root.quit)
         self.btn_exit.place(relx=0.5, rely=0.9)
-        self.btn_bk = Button(self.root.mainframe, text="Exit",
-                             font=intro_font, command=lambda: ProjectTypeScreen(self.r))
+        self.btn_bk = Button(self.root.mainframe, text="Back",
+                             font=intro_font, command=lambda: ProjectTypeScreen(self.root))
         self.btn_bk.place(relx=0.7, rely=0.9)
 
 

@@ -1,6 +1,6 @@
 from Databases import MethodValidationDatabase
 import json
-from os import chdir, listdir
+from os import chdir, listdir, getcwd
 from Packages.Utils import JSONAdaptor
 
 class Project:
@@ -11,8 +11,7 @@ class Project:
         self.datapath = datapath
         self.filepath = filepath
         self.root = root
-        self.database = MethodValidationDatabase(
-            self.name, self.team, self.datapath, self.filepath, other=self)
+        chdir(filepath)
 
 
 class Validation(Project):
@@ -25,30 +24,29 @@ class Validation(Project):
 
     def set_advanced_validation_settings(self):
         try:
-            if self.validation_settings['advanced_validation_settings'] is None:
+            if self.settings['advanced_validation_settings'] is None:
                 try:
                     with open('Settings-User.json', 'r') as settings:
-                        self.validation_settings['advanced_validation_settings'] = JSONAdaptor.jsontopython(json.load(
-                            settings))
+                        self.settings = JSONAdaptor.jsontopython(
+                            json.load(settings))
                 except FileNotFoundError:
+                    print('No user settings found')
                     try:
                         with open('Settings-Default.json', 'r') as settings:
-                            self.validation_settings['advanced_validation_settings'] = JSONAdaptor.jsontopython(json.load(
-                                settings))
+                            self.settings = JSONAdaptor.jsontopython(
+                                json.load(settings))
                     except FileNotFoundError:
-                        print("Validation settings not found")
-            else:
-                raise ValueError
-        except ValueError:
-            pass
+                        print('Could not load any settings')
+        except KeyError:
+            print('Key access violation')
         return None
 
     def __init__(self, settings=None, root=None):
         super().__init__(settings['project_parameters']['name'], settings['project_parameters']['team'],
                          settings['project_parameters']['datapath'], settings['project_parameters']['filepath'], root)
-        self.validation_settings = settings
+        self.settings = settings
         self.to_do = []
-        for task in self.validation_settings['basic_settings']:
+        for task in self.settings['basic_settings']:
             if task.Curve is "STD":
                 self.std = task
             elif task.Curve is "Spike":
@@ -56,16 +54,17 @@ class Validation(Project):
             elif task.Curve is "Matrix":
                 self.matrix = task
             self.to_do.append(task)
-            self.moveahead()
+        self.set_advanced_validation_settings()
+        self.database = MethodValidationDatabase(
+            self.name, self.team, self.datapath, self.filepath, other=self)
+        self.moveahead()
 
     def moveahead(self):
-        self.set_advanced_validation_settings()
         self.database.create_table(
-            table='validation', settings=self.validation_settings, to_do=self.to_do)
+            table='validation', settings=self.settings, to_do=self.to_do)
 
     @staticmethod
     def Save(settings=None, filepath=None):
-        chdir(filepath)
         settings = JSONAdaptor.pythontojson(settings)
         with open("Settings-User.json", "w") as file:
             json.dump(settings, file, indent=4)
