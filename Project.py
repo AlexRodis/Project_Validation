@@ -3,6 +3,11 @@ import json
 from os import chdir, listdir, getcwd
 from Packages.Utils import JSONAdaptor
 
+global programpath
+
+programpath = r"C:\Users\User\Documents\Programming\Project Validation"
+
+
 class Project:
 
     def __init__(self, name, team, datapath, filepath, root):
@@ -26,9 +31,12 @@ class Validation(Project):
         try:
             if self.settings['advanced_validation_settings'] is None:
                 try:
+                    cwd = getcwd()
+                    chdir(programpath)
                     with open('Settings-User.json', 'r') as settings:
                         self.settings = JSONAdaptor.jsontopython(
                             json.load(settings))
+                    chdir(cwd)
                 except FileNotFoundError:
                     print('No user settings found')
                     try:

@@ -7,8 +7,12 @@ from Packages.Utils import InputUtils
 
 # Pesticides in Honey
 # Κατερίνα Κορωνία, Αλέξανδρος Ρόδης, Αποστόλης Καραγιαννίδης,Γιώργος Κουλής, Νικόλαος Θωμαΐδης
-# H:\Pesticides Honey\Results\GC\Method Validation\Excel Exports
+# H:\Pesticides Honey\TEST
 # C:\Users\User\Desktop\HoneyPesticides
+
+
+
+#H:\Pesticides Honey\Results\GC\Method Validation\Excel Exports
 
 
 

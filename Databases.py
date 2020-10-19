@@ -1,6 +1,8 @@
 import sqlite3 as sql
 from os import chdir, mkdir, listdir
 import Excel
+from Packages.Utils import FileUtils
+from collections import namedtuple
 
 
 class Database:
@@ -55,7 +57,7 @@ class Database:
                 commandstring = self.create_table_structure(
                     commandstring=commandstring, table=kwargs['table'])
             elif kwargs['table'] == 'validation':
-                commandstring += "ID INT PRIMARY KEY, ANALYTE TEXT,"
+                commandstring += "ID INT PRIMARY KEY, METHOD TEXT, ANALYTE TEXT,"
                 commandstring = self.create_table_structure(
                     commandstring=commandstring, table=kwargs['table'], settings=kwargs['settings'], to_do=kwargs['to_do'])
             connection = sql.connect("{}.sqlite".format(self.name))
@@ -87,22 +89,69 @@ class Database:
 
 
 class MethodValidationDatabase(Database):
-##Resume here tomorrow with the syntax for INSERT INTO VALUES
-    def load_analytes(self):
+    
+    def parse_files(self):
+        D = namedtuple("Excel Spreadsheets and where to find them", ["DirectoryPath", "Spreadsheets", "Method"])
         chdir(self.datapath)
-        analytes = Excel.get_analytes(workbook=listdir()[1])
-        chdir(self.filepath)
-        print("{}.sqlite".format(self.name))
-        connection = sql.connect("{}.sqlite".format(self.name))
-        with connection as con:
-            cursor = con.cursor()
-            for idx, analyte in enumerate(analytes, start=1):
-                cursor.execute(
-                    'INSERT INTO validation (ID, ANALYTE) VALUES ({idx},{analyte})')
+        dirs = listdir()
+        datasheets = []
+        for folder in dirs:
+            t_dir = self.datapath + "\\" + folder
+            chdir(t_dir)
+            wbs = FileUtils.select_xlsx(listdir())
+            if wbs != []:
+                datasheets.append(D(DirectoryPath = t_dir, Spreadsheets = wbs , Method = folder))
+        return datasheets
+    
+    # For data of multiple instruments, create a data folder and aim datapath var to said folder. Inside create sublfolders, per data batch i.i. ESI+, ESI-,GC Check dirs logic. Need to collect ESI Excel exports to check.
+    #This needs testing. Lack files
+    def load_analytes(self):
+        idx = 0
+        # chdir(self.datapath)
+        datasheets = self.parse_files()
+        # dirs = listdir()
+        # for folder in dirs:
+        #     t_dir = self.datapath + "\\" + folder
+        #     chdir(t_dir)
+        #     wbs = FileUtils.select_xlsx(listdir())
+        #     if wbs != []:
+        #         analytes = Excel.get_analytes(
+        #             workbook=wbs[0])
+        for datasheet in datasheets:
+            dirpath, method ,excels = datasheet.DirectoryPath,datasheet.Method, datasheet.Spreadsheets
+            analytes = Excel.get_analytes(wrokbook = excels)
+            chdir(self.filepath)
+            connection = sql.connect("{}.sqlite".format(self.name))
+            cursor = connection.cursor()
+            for analyte in analytes:
+                with connection:
+                    cursor.execute("SELECT (ANALYTE,METHOD) FROM validation WHERE VALUES = (?,?)" ,[analyte, method])
+                if cursor.fetchone() is None:
+                    with connection:
+                        cursor.execute(
+                            "INSERT INTO validation(ID, ANALYTE,METHOD) VALUES(?,?,?)", [idx, analyte,method])
+                    idx += 1
+        return datasheets
+
+    def load_base_values(self, workbooks = None):
+# Cycle through all excel sheets in folder and all available forlders and load them to the database.
+# Possibly use a generator here. Lots of directory changes. Review
+#UNTESTED, MUST REVIEW
+        for path,method,sheets in workbooks:
+            chdir(path)
+            connection = sql.connect(self.name + ".sqlite")
+            cursor = connection.cursor()
+            for sheet in sheets:
+                area,analyte = Excel.get_areas(sheet,method)       
+                with connection:
+                    cursor.execute("SELECT (ANALYTE , METHOD) FROM validation WHERE VALUES = (?,?)" [analyte,method])
+                    if c.fetchone() is None:
+                        cursor.execute("INSERT INTO validation (?) WHERE ANALYTE = (?)", [sheet,analyte])
         return None
 
     def __init__(self, name, team, filepath, datapath, other=None):
         super().__init__(name, team, filepath, datapath)
         super().create_table(table='validation', settings=other.settings, to_do=other.to_do)
-        self.load_analytes()
+        datasheets = self.load_analytes()
+        self.load_base_values(workbooks = datasheets)
         return None
