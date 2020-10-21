@@ -5,6 +5,7 @@ from Databases import Database
 from os import chdir
 from Packages.Utils import InputUtils
 
+
 # Pesticides in Honey
 # Κατερίνα Κορωνία, Αλέξανδρος Ρόδης, Αποστόλης Καραγιαννίδης,Γιώργος Κουλής, Νικόλαος Θωμαΐδης
 # H:\Pesticides Honey\TEST
@@ -23,7 +24,8 @@ class IntroScreen:
         self.root = root
         # Implement geometry logic. Weird namespace errors
         self.root.geometry("960x750")
-        self.root.mainframe = Frame(self.root, bg='coral').place(
+        self.root.mainframe = Frame(self.root, bg='coral')
+        self.root.mainframe.place(
             relx=0, rely=0, relwidth=1, relheight=1)
         self.root.btn_new = Button(
             self.root.mainframe, text="New Project", font=intro_font, command=lambda: ProjectTypeScreen(self.root))
@@ -76,7 +78,8 @@ class ProjectTypeScreen(InputUtils):
         intro_font = gui_font(letterfont, 10)
         self.root = root
         self.root.geometry("960x750")
-        self.root.mainframe = Frame(self.root, bg='blue').place(
+        self.root.mainframe = Frame(self.root, bg='blue')
+        self.root.mainframe.place(
             relx=0, rely=0, relwidth=1, relheight=1)
         self.btn_library = Button(
             self.root.mainframe, font=intro_font, text="Build Analyte Library", state='disabled')
@@ -103,7 +106,7 @@ class MethodValidationScreen(InputUtils):
         self.root = root
         self.add_features(settings)
 
-
+    @staticmethod
     def get_state(settings,statevars):
         Base_Parameters= namedtuple("Base_Parameters",'Curve,Repeatability,Reproducibility')
         to_do=[]
@@ -113,7 +116,7 @@ class MethodValidationScreen(InputUtils):
         settings['basic_settings']=to_do
         return defaultdict(lambda:None,settings)
 
-    
+    @staticmethod
     def initiate_validation(root=None,settings=None):
         Validation(root=root,settings=settings)
         return None
@@ -125,8 +128,8 @@ class MethodValidationScreen(InputUtils):
             if atrr is not None:
                 self.atrr =MethodValidationScreen.convert_input(self.atrr)
             else:
-                raise KeyValueError
-        except KeyValueError:    
+                raise KeyError
+        except KeyError:    
             print("Attribute is void!")
 
     def add_features(self,settings):
@@ -205,7 +208,7 @@ class MethodValidationSettingsScreen(InputUtils):
         self.add_curve_parameters(settings)
 
     def initiate_validation(self,settings):
-        Validation(root,settings)
+        Validation(self.root,settings)
     
 
         # self.curvesformat_fontentry=Entry(self.root.mainframe)
