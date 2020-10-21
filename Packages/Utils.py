@@ -167,3 +167,9 @@ class InputUtils:
             masterlist.append({'spike_index': item[0], 'spike_level': item[1], 'Is_In_Curve': item[2],
                                'RepeatabilityandRepeats': item[3], 'InterLabReproducibilityandRepeats': item[4]})
         return masterlist
+
+
+class FileUtils:
+
+    def select_xlsx(arg):
+        return [x for x in arg if '.xlsx' in x]

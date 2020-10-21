@@ -10,3 +10,4 @@ testing.json
 unittesting.py
 *.pyc
 devnotes.txt
+.vscode

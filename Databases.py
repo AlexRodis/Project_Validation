@@ -3,6 +3,7 @@ from os import chdir, mkdir, listdir
 import Excel
 from Packages.Utils import FileUtils
 from collections import namedtuple
+from re import sub
 
 
 class Database:
@@ -90,25 +91,61 @@ class Database:
 
 class MethodValidationDatabase(Database):
     
+    def _validate_data(self, datasheets,dirs):
+        ''' Match Excel spreadsheet contents with settings loaded and verify settings are satisfied.
+            Scales badly. Review
+        '''
+        settings = self.settings
+        tasks = self.settings['basic_settings']
+        for folder in dirs:
+            for Base_Parameters in tasks:
+                for point in settings['advanced_settings']['advanced_curve_settings'][Base_Parameters.Curve]:
+                    pointstring = "{curve}_spike_{level}_D1_1".format(
+                        curve=Base_Parameters.Curve, level=point['spike_level'])
+                    for idx, excelfile in enumerate(datasheets[folder].Spreadsheets):
+                        if pointstring in excelfile:
+                            datasheets[folder].Spreadsheets[idx] = sub(
+                                "(?<={curve}_spike_){level}(?=_D1_1)".format(curve=Base_Parameters.Curve, level=point['spike_level']), "{}".format(point['spike_index']), excelfile)
+                            break
+                if Base_Parameters.Repeatability:
+                    if point["RepeatabilityandRepeats"][0]:
+                        for repeat in range(1,point["RepeatabilityandRepeats"][1]+1):
+                            for idx, excelfile in enumerate(datasheets[folder].Spreadsheets):
+                                if "{curve}_spike_{level}_D1_{reap}".format(curve=Base_Parameters.Curve, level=point['spike_level'], reap = repeat) in excelfile:
+                                    datasheets[folder].Spreadsheets[idx] = sub("(?<={curve}_spike_){level}(?=_D1_{r})".format(curve=Base_Parameters.Curve, level=point['spike_level'], r=repeat), point[
+                                        'spike_index'], "{curve}_spike_{level}_D1_{reap}".format(curve=Base_Parameters.Curve, level=point['spike_level'], reap=repeat))
+                                    break
+                if Base_Parameters.Reproducibility:
+                    if point["InterLabReproducibilityandRepeats"][0]:
+                        for repeat in range(1,point["InterLabReproducibilityandRepeats"][1]+1):
+                            for idx, excelfile in enumerate(datasheets[folder].Spreadsheets):
+                                if "{curve}_spike_{level}_D2_{reap}".format(curve=Base_Parameters.Curve, level=point['spike_level'], reap=repeat) in excelfile:
+                                    datasheets[folder].Spreadsheets[idx] = sub("(?<={curve}_spike_){level}(?=_D2_{r})".format(
+                                        curve=Base_Parameters.Curve, level=point['spike_level'], r=repeat),point['spike_index'] ,"{curve}_spike_{level}_D2_{reap}".format(curve=Base_Parameters.Curve, level=point['spike_level'], reap=repeat))
+                                    break
+        return None
+    
     def parse_files(self):
-        D = namedtuple("Excel Spreadsheets and where to find them", ["DirectoryPath", "Spreadsheets", "Method"])
+        D = namedtuple("Spreadsheets", ["DirectoryPath", "Spreadsheets", "Method"])
         chdir(self.datapath)
         dirs = listdir()
-        datasheets = []
+        datasheets = {}
         for folder in dirs:
+            datasheets[folder] = None
             t_dir = self.datapath + "\\" + folder
             chdir(t_dir)
             wbs = FileUtils.select_xlsx(listdir())
             if wbs != []:
-                datasheets.append(D(DirectoryPath = t_dir, Spreadsheets = wbs , Method = folder))
-        return datasheets
+                datasheets[folder]=D(DirectoryPath = t_dir, Spreadsheets = wbs , Method = folder)
+        return datasheets,dirs
     
     # For data of multiple instruments, create a data folder and aim datapath var to said folder. Inside create sublfolders, per data batch i.i. ESI+, ESI-,GC Check dirs logic. Need to collect ESI Excel exports to check.
     #This needs testing. Lack files
     def load_analytes(self):
         idx = 0
         # chdir(self.datapath)
-        datasheets = self.parse_files()
+        datasheets,dirs = self.parse_files()
+        self._validate_data(datasheets,dirs)
         # dirs = listdir()
         # for folder in dirs:
         #     t_dir = self.datapath + "\\" + folder
@@ -117,20 +154,22 @@ class MethodValidationDatabase(Database):
         #     if wbs != []:
         #         analytes = Excel.get_analytes(
         #             workbook=wbs[0])
-        for datasheet in datasheets:
-            dirpath, method ,excels = datasheet.DirectoryPath,datasheet.Method, datasheet.Spreadsheets
-            analytes = Excel.get_analytes(wrokbook = excels)
-            chdir(self.filepath)
-            connection = sql.connect("{}.sqlite".format(self.name))
-            cursor = connection.cursor()
-            for analyte in analytes:
-                with connection:
-                    cursor.execute("SELECT (ANALYTE,METHOD) FROM validation WHERE VALUES = (?,?)" ,[analyte, method])
-                if cursor.fetchone() is None:
+        for folder in datasheets:
+            dirpath, method ,excels = datasheets[folder].DirectoryPath,datasheets[folder].Method, datasheets[folder].Spreadsheets
+            for excel in excels:    
+                chdir(dirpath)
+                analytes = Excel.get_analytes(workbook = excel)
+                chdir(self.filepath)
+                connection = sql.connect("{}.sqlite".format(self.name))
+                cursor = connection.cursor()
+                for analyte in analytes:
                     with connection:
-                        cursor.execute(
-                            "INSERT INTO validation(ID, ANALYTE,METHOD) VALUES(?,?,?)", [idx, analyte,method])
-                    idx += 1
+                        cursor.execute("SELECT (ANALYTE,METHOD) FROM validation WHERE VALUES = (?,?)" ,[analyte, method])
+                        if cursor.fetchone() is None:
+                            cursor.execute("INSERT INTO validation(ID, ANALYTE,METHOD) VALUES(?,?,?)", [idx, analyte,method])
+                        else:
+                            print("Record already exists:\n{}".format(str(analyte)+str(method)+str(idx)))
+                        idx +=1
         return datasheets
 
     def load_base_values(self, workbooks = None):
@@ -144,14 +183,18 @@ class MethodValidationDatabase(Database):
             for sheet in sheets:
                 area,analyte = Excel.get_areas(sheet,method)       
                 with connection:
-                    cursor.execute("SELECT (ANALYTE , METHOD) FROM validation WHERE VALUES = (?,?)" [analyte,method])
-                    if c.fetchone() is None:
-                        cursor.execute("INSERT INTO validation (?) WHERE ANALYTE = (?)", [sheet,analyte])
+                    cursor.execute("SELECT (ANALYTE , METHOD) FROM validation WHERE VALUES = (?,?)", [analyte,method])
+                    if cursor.fetchone() is None:
+                        try:
+                            cursor.execute("INSERT INTO validation (?) WHERE ANALYTE = (?)", [area,analyte])
+                        except:
+                            print("Invalid spreadsheet name")
         return None
 
     def __init__(self, name, team, filepath, datapath, other=None):
         super().__init__(name, team, filepath, datapath)
         super().create_table(table='validation', settings=other.settings, to_do=other.to_do)
+        self.settings = other.settings
         datasheets = self.load_analytes()
         self.load_base_values(workbooks = datasheets)
         return None
