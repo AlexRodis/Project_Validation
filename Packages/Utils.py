@@ -1,5 +1,6 @@
 import copy
 from collections import namedtuple
+import re
 
 
 class JSONAdaptor:
@@ -170,6 +171,17 @@ class InputUtils:
 
 
 class FileUtils:
-
+    
+    @staticmethod
+    def normalise_nums(args):
+        pattern = re.compile('(?<=_spike_)[0-9]+')
+        out = []
+        for arg in args:
+            num = re.search(pattern, arg).group(0)
+            floated = str(float(num))
+            out.append(re.sub(pattern, floated, arg))
+        return out
+    
+    @staticmethod
     def select_xlsx(arg):
         return [x for x in arg if '.xlsx' in x]
