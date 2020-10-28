@@ -93,7 +93,7 @@ class Database:
 
 class MethodValidationDatabase(Database):
 
-
+    @staticmethod
     def _normalise_to_floats(files):
         # Convert non-float concentration on filenames to floats, for consistency
             out = []
@@ -104,10 +104,13 @@ class MethodValidationDatabase(Database):
                 out.append(z)
             return out
 
+    @staticmethod
     def crossValidateFiles(files, settings):
     # Accesses a list of files, given a list of tasks and settings for these tasks, and returns True if files have been found for all settings, and
     # no files found and unaccounted for.
-    # This linear algorithm doesn't scale well. Possibly implement binary search
+    # This linear algorithm doesn't scale well. Possibly implement binary search.
+    #Maximaze code reuse by splitting the concentration-to-index proccess into a sepperate function
+        files = [x.name for x in files]
         tasks = settings["basic_settings"]
         Reg_files = []
         files = sorted(MethodValidationDatabase._normalise_to_floats(files))
@@ -196,8 +199,47 @@ class MethodValidationDatabase(Database):
                 
             if sentinel_extra_files:
                 return True
+
+    @staticmethod
+    def _fetchFileCoords(settings, file):
+        FileCoords = namedtuple('FileCoords', 'name,i,j,k,z')
+        curve_pattern = re.compile('(STD|Matrix|Spike)(?=_spike_)')
+        repeat_pattern = re.compile('(?<=_D[0-9]_)[0-9]+')
+        day_pattern = re.compile('(?<=_D)[0-9]+(?=_[0-9])')
+        index_pattern = re.compile('(?<=_spike_)([0-9]*\.?[0-9]+)(?=_D[0-9]_[0-9]+)')
+        file_ext = re.compile("\.[A-z]+")
+        try:
+            ext = re.search(file_ext, file).group()
+            if ext != '.xlsx':
+                raise TypeError
+        except AttributeError:
+            raise TypeError
+        try:
+            curve = re.search(curve_pattern, file).group()
+        except AttributeError:
+            raise NameError
+        try:
+            day = re.search(day_pattern, file).group()
+            day = int(day)
+            if (day != 1 and day != 2):
+                raise ValueError
+        except AttributeError:
+            raise TypeError
+        try:
+            repeat = re.search(repeat_pattern, file).group()
+            temp = re.search(index_pattern, file).group()
+        except AttributeError:
+            raise TypeError
+        repeat = int(repeat)
+        temp = float(temp)
+        idx = [x['spike_index'] for x in settings['advanced_settings']['advanced_curve_settings'][curve] if x['spike_level'] == temp][0]
+        if repeat >= 20 or repeat <= 0:
+            raise ValueError
+        return FileCoords(name=file, i=curve, j=idx, k=repeat, z=day)
+
+
     
-    def parse_files(self):
+    def _parse_files(self):
         D = namedtuple("Spreadsheets", ["DirectoryPath", "Spreadsheets", "Method" ])
         chdir(self.datapath)
         dirs = listdir()
@@ -207,8 +249,11 @@ class MethodValidationDatabase(Database):
             chdir(t_dir)
             wbs = FileUtils.select_xlsx(listdir())
             if wbs != []:
-                datasheets.append(D(DirectoryPath = t_dir, Spreadsheets = wbs , Method = folder))
-            
+                v = []
+                for spreadsheet in wbs:
+                    v.append(MethodValidationDatabase._fetchFileCoords(self.settings, spreadsheet))
+                datasheets.append(D(DirectoryPath = t_dir, Spreadsheets = v , Method = folder))
+
             else:
                 raise AttributeError("Attempted to open workbook - found nothing")
         return datasheets,dirs
@@ -217,27 +262,27 @@ class MethodValidationDatabase(Database):
     #This needs testing. Lack files
     def load_analytes(self):
         idx = 0
-        datasheets,dirs = self.parse_files()
-        for folder in [next(x.Method for x in datasheets)]:
+        datasheets,dirs = self._parse_files()
+        for folder in [x.Method for x in datasheets]:
             dirpath,excels = next(([x.DirectoryPath, x.Spreadsheets] for x in datasheets if x.Method == folder), None)
-            x = MethodValidationDatabase.crossValidateFiles(excels, self.settings)
+            # x = MethodValidationDatabase.crossValidateFiles(excels, self.settings)
             if MethodValidationDatabase.crossValidateFiles(excels, self.settings):
                 for excel in excels:    
                     chdir(dirpath)
-                    analytes = Excel.get_analytes(workbook = excel)
+                    analytes = Excel.get_analytes(workbook = excel.name)
                     chdir(self.filepath)
                     connection = sql.connect("{}.sqlite".format(self.name))
                     cursor = connection.cursor()
                     for analyte in analytes:
                         with connection:
                             cursor.execute("SELECT ANALYTE,METHOD FROM validation WHERE ANALYTE = :analyte AND METHOD = :method" ,{'analyte': analyte, 'method': folder})
+                            print("{}{}".format(analyte, folder), flush = True)
                             if cursor.fetchone() is None:
                                 cursor.execute("INSERT INTO validation (ID, ANALYTE,METHOD) VALUES (:idx , :analyte,:method)",{'idx': idx, 'analyte':analyte ,'method':folder} )
                             idx +=1
         return datasheets
 
     def load_base_values(self, workbooks = None):
-        
         return None
 
     def __init__(self, name, team, filepath, datapath, other=None):
