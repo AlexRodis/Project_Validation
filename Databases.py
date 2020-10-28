@@ -3,7 +3,9 @@ from os import chdir, mkdir, listdir
 import Excel
 from Packages.Utils import FileUtils
 from collections import namedtuple
-from re import sub
+import re
+import pprint
+import warnings
 
 
 class Database:
@@ -90,105 +92,152 @@ class Database:
 
 
 class MethodValidationDatabase(Database):
-    
-    def _validate_data(self, datasheets,dirs):
-        ''' Match Excel spreadsheet contents with settings loaded and verify settings are satisfied.
-            Scales badly. Review
-        '''
-        settings = self.settings
-        tasks = self.settings['basic_settings']
-        for folder in dirs:
-            for Base_Parameters in tasks:
-                for point in settings['advanced_settings']['advanced_curve_settings'][Base_Parameters.Curve]:
-                    pointstring = "{curve}_spike_{level}_D1_1".format(
-                        curve=Base_Parameters.Curve, level=point['spike_level'])
-                    for idx, excelfile in enumerate(datasheets[folder].Spreadsheets):
-                        if pointstring in excelfile:
-                            datasheets[folder].Spreadsheets[idx] = sub(
-                                "(?<={curve}_spike_){level}(?=_D1_1)".format(curve=Base_Parameters.Curve, level=point['spike_level']), "{}".format(point['spike_index']), excelfile)
-                            break
-                if Base_Parameters.Repeatability:
-                    if point["RepeatabilityandRepeats"][0]:
-                        for repeat in range(1,point["RepeatabilityandRepeats"][1]+1):
-                            for idx, excelfile in enumerate(datasheets[folder].Spreadsheets):
-                                if "{curve}_spike_{level}_D1_{reap}".format(curve=Base_Parameters.Curve, level=point['spike_level'], reap = repeat) in excelfile:
-                                    datasheets[folder].Spreadsheets[idx] = sub("(?<={curve}_spike_){level}(?=_D1_{r})".format(curve=Base_Parameters.Curve, level=point['spike_level'], r=repeat), point[
-                                        'spike_index'], "{curve}_spike_{level}_D1_{reap}".format(curve=Base_Parameters.Curve, level=point['spike_level'], reap=repeat))
-                                    break
-                if Base_Parameters.Reproducibility:
-                    if point["InterLabReproducibilityandRepeats"][0]:
-                        for repeat in range(1,point["InterLabReproducibilityandRepeats"][1]+1):
-                            for idx, excelfile in enumerate(datasheets[folder].Spreadsheets):
-                                if "{curve}_spike_{level}_D2_{reap}".format(curve=Base_Parameters.Curve, level=point['spike_level'], reap=repeat) in excelfile:
-                                    datasheets[folder].Spreadsheets[idx] = sub("(?<={curve}_spike_){level}(?=_D2_{r})".format(
-                                        curve=Base_Parameters.Curve, level=point['spike_level'], r=repeat),point['spike_index'] ,"{curve}_spike_{level}_D2_{reap}".format(curve=Base_Parameters.Curve, level=point['spike_level'], reap=repeat))
-                                    break
-        return None
+
+
+    def _normalise_to_floats(files):
+        # Convert non-float concentration on filenames to floats, for consistency
+            out = []
+            x = re.compile("[0-9]+(?=_D)")
+            for file in files:
+                y = re.search(x, file).group(0)
+                z = re.sub("[0-9]+(?=_D)", str(float(y)), file)
+                out.append(z)
+            return out
+
+    def crossValidateFiles(files, settings):
+    # Accesses a list of files, given a list of tasks and settings for these tasks, and returns True if files have been found for all settings, and
+    # no files found and unaccounted for.
+    # This linear algorithm doesn't scale well. Possibly implement binary search
+        tasks = settings["basic_settings"]
+        Reg_files = []
+        files = sorted(MethodValidationDatabase._normalise_to_floats(files))
+        try:    
+            for task in tasks:
+                for point in settings["advanced_settings"]["advanced_curve_settings"][task.Curve]:
+                        i = 0
+                        sentinel_fnf_err = True
+                        for file in files:
+                            searchstring = "{curve}_spike_{level}_D1_1".format(curve=task.Curve, level= point["spike_level"])
+                            if "{curve}_spike_{level}_D1_1".format(curve=task.Curve, level= point["spike_level"]) in file:
+                                sentinel_fnf_err = False
+                                Reg_files.append(file)
+                                i += 1
+                        
+                        if sentinel_fnf_err:
+                            msg = searchstring
+                            raise FileNotFoundError
+                        
+                        if i>1:
+                            msg = searchstring
+                            raise NameError
+                        
+                if task.Repeatability:
+                    for point in settings["advanced_settings"]["advanced_curve_settings"][task.Curve]:
+                        if point["RepeatabilityandRepeats"][0]:
+                            for repeat in range(1, point["RepeatabilityandRepeats"][1] + 1):    
+                                sentinel_fnf_err = True
+                                i = 0
+                                for file in files:
+                                    searchstring = "{curve}_spike_{level}_D1_{repeat}".format(curve =task.Curve ,level = point["spike_level"], repeat = repeat)
+                                    if "{curve}_spike_{level}_D1_{repeat}".format(curve =task.Curve ,level = point["spike_level"], repeat = repeat) in file:
+                                        sentinel_fnf_err = False
+                                        Reg_files.append(file)
+                                        i += 1
+                                
+                                if sentinel_fnf_err:
+                                    msg = searchstring
+                                    raise FileNotFoundError("Missing specified file: " + msg)
+                                
+                                if i>1:
+                                    msg = searchstring
+                                    warnings.warn("Possible duplicate found: " + msg)
+                
+                if task.Reproducibility:
+                    for point in settings["advanced_settings"]["advanced_curve_settings"][task.Curve]:
+                        if point["InterLabReproducibilityandRepeats"][0]:
+                            for repeat in range(1, point["InterLabReproducibilityandRepeats"][1] + 1):
+                                sentinel_fnf_err = True
+                                i = 0
+                                for file in files:
+                                    searchstring = "{curve}_spike_{level}_D2_{repeat}".format(curve = task.Curve, level = point["spike_level"], repeat = repeat)
+                                    if "{curve}_spike_{level}_D2_{repeat}".format(curve = task.Curve, level = point["spike_level"], repeat = repeat) in file:
+                                        sentinel_fnf_err = False
+                                        Reg_files.append(file)
+                                        i += 1
+                                
+                                if sentinel_fnf_err:
+                                    msg = searchstring
+                                    raise FileNotFoundError
+                                
+                                if i>1:
+                                    msg = searchstring
+                                    raise NameError
+        
+        except FileNotFoundError:
+            print("File specified in settings not found: \n" + msg)
+        
+        except NameError:
+            print("Duplicate file found: \n" + msg)
+        
+        finally:
+            unaccounted_files = []
+            sentinel_extra_files = True
+            Reg_files = sorted(list(dict.fromkeys(Reg_files)))
+            for file in files:
+                if file in Reg_files:
+                    continue
+                else:
+                    sentinel_extra_files = False
+                    unaccounted_files.append(file)
+            if not  sentinel_extra_files:
+                warnings.warn("Warning: Found files unaccounted for in settings: ")
+                pprint.pprint(unaccounted_files)
+                return False
+                
+            if sentinel_extra_files:
+                return True
     
     def parse_files(self):
-        D = namedtuple("Spreadsheets", ["DirectoryPath", "Spreadsheets", "Method"])
+        D = namedtuple("Spreadsheets", ["DirectoryPath", "Spreadsheets", "Method" ])
         chdir(self.datapath)
         dirs = listdir()
-        datasheets = {}
+        datasheets = []
         for folder in dirs:
-            datasheets[folder] = None
             t_dir = self.datapath + "\\" + folder
             chdir(t_dir)
             wbs = FileUtils.select_xlsx(listdir())
             if wbs != []:
-                datasheets[folder]=D(DirectoryPath = t_dir, Spreadsheets = wbs , Method = folder)
+                datasheets.append(D(DirectoryPath = t_dir, Spreadsheets = wbs , Method = folder))
+            
+            else:
+                raise AttributeError("Attempted to open workbook - found nothing")
         return datasheets,dirs
     
     # For data of multiple instruments, create a data folder and aim datapath var to said folder. Inside create sublfolders, per data batch i.i. ESI+, ESI-,GC Check dirs logic. Need to collect ESI Excel exports to check.
     #This needs testing. Lack files
     def load_analytes(self):
         idx = 0
-        # chdir(self.datapath)
         datasheets,dirs = self.parse_files()
-        self._validate_data(datasheets,dirs)
-        # dirs = listdir()
-        # for folder in dirs:
-        #     t_dir = self.datapath + "\\" + folder
-        #     chdir(t_dir)
-        #     wbs = FileUtils.select_xlsx(listdir())
-        #     if wbs != []:
-        #         analytes = Excel.get_analytes(
-        #             workbook=wbs[0])
-        for folder in datasheets:
-            dirpath, method ,excels = datasheets[folder].DirectoryPath,datasheets[folder].Method, datasheets[folder].Spreadsheets
-            for excel in excels:    
-                chdir(dirpath)
-                analytes = Excel.get_analytes(workbook = excel)
-                chdir(self.filepath)
-                connection = sql.connect("{}.sqlite".format(self.name))
-                cursor = connection.cursor()
-                for analyte in analytes:
-                    with connection:
-                        cursor.execute("SELECT (ANALYTE,METHOD) FROM validation WHERE VALUES = (?,?)" ,[analyte, method])
-                        if cursor.fetchone() is None:
-                            cursor.execute("INSERT INTO validation(ID, ANALYTE,METHOD) VALUES(?,?,?)", [idx, analyte,method])
-                        else:
-                            print("Record already exists:\n{}".format(str(analyte)+str(method)+str(idx)))
-                        idx +=1
+        for folder in [next(x.Method for x in datasheets)]:
+            dirpath,excels = next(([x.DirectoryPath, x.Spreadsheets] for x in datasheets if x.Method == folder), None)
+            x = MethodValidationDatabase.crossValidateFiles(excels, self.settings)
+            if MethodValidationDatabase.crossValidateFiles(excels, self.settings):
+                for excel in excels:    
+                    chdir(dirpath)
+                    analytes = Excel.get_analytes(workbook = excel)
+                    chdir(self.filepath)
+                    connection = sql.connect("{}.sqlite".format(self.name))
+                    cursor = connection.cursor()
+                    for analyte in analytes:
+                        with connection:
+                            cursor.execute("SELECT ANALYTE,METHOD FROM validation WHERE ANALYTE = :analyte AND METHOD = :method" ,{'analyte': analyte, 'method': folder})
+                            if cursor.fetchone() is None:
+                                cursor.execute("INSERT INTO validation (ID, ANALYTE,METHOD) VALUES (:idx , :analyte,:method)",{'idx': idx, 'analyte':analyte ,'method':folder} )
+                            idx +=1
         return datasheets
 
     def load_base_values(self, workbooks = None):
-# Cycle through all excel sheets in folder and all available forlders and load them to the database.
-# Possibly use a generator here. Lots of directory changes. Review
-#UNTESTED, MUST REVIEW
-        for path,method,sheets in workbooks:
-            chdir(path)
-            connection = sql.connect(self.name + ".sqlite")
-            cursor = connection.cursor()
-            for sheet in sheets:
-                area,analyte = Excel.get_areas(sheet,method)       
-                with connection:
-                    cursor.execute("SELECT (ANALYTE , METHOD) FROM validation WHERE VALUES = (?,?)", [analyte,method])
-                    if cursor.fetchone() is None:
-                        try:
-                            cursor.execute("INSERT INTO validation (?) WHERE ANALYTE = (?)", [area,analyte])
-                        except:
-                            print("Invalid spreadsheet name")
+        
         return None
 
     def __init__(self, name, team, filepath, datapath, other=None):
