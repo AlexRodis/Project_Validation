@@ -95,7 +95,7 @@ class MethodValidationDatabase(Database):
 
     @staticmethod
     def _normalise_to_floats(files):
-        # Convert non-float concentration on filenames to floats, for consistency
+        # Convert non-float concentration on filenames to floats, for consistency. Possible duplicate code from Utils
             out = []
             x = re.compile("[0-9]+(?=_D)")
             for file in files:
@@ -259,7 +259,7 @@ class MethodValidationDatabase(Database):
         return datasheets,dirs
     
     # For data of multiple instruments, create a data folder and aim datapath var to said folder. Inside create sublfolders, per data batch i.i. ESI+, ESI-,GC Check dirs logic. Need to collect ESI Excel exports to check.
-    #This needs testing. Lack files
+    #Many functions here can be improved with generators
     def load_analytes(self):
         idx = 0
         datasheets,dirs = self._parse_files()
@@ -276,13 +276,16 @@ class MethodValidationDatabase(Database):
                     for analyte in analytes:
                         with connection:
                             cursor.execute("SELECT ANALYTE,METHOD FROM validation WHERE ANALYTE = :analyte AND METHOD = :method" ,{'analyte': analyte, 'method': folder})
-                            print("{}{}".format(analyte, folder), flush = True)
                             if cursor.fetchone() is None:
                                 cursor.execute("INSERT INTO validation (ID, ANALYTE,METHOD) VALUES (:idx , :analyte,:method)",{'idx': idx, 'analyte':analyte ,'method':folder} )
                             idx +=1
         return datasheets
 
-    def load_base_values(self, workbooks = None):
+    def _load_base_values(self, datasheets = None):
+        connection = sql.connect('{}.sqlite'.format(self.name))
+        cursor = connection.cursor()
+        for folder in datasheets:
+            
         return None
 
     def __init__(self, name, team, filepath, datapath, other=None):
@@ -290,5 +293,5 @@ class MethodValidationDatabase(Database):
         super().create_table(table='validation', settings=other.settings, to_do=other.to_do)
         self.settings = other.settings
         datasheets = self.load_analytes()
-        self.load_base_values(workbooks = datasheets)
+        self._load_base_values(workbooks = datasheets)
         return None
