@@ -10,7 +10,7 @@ def get_analytes(workbook=None):
     return this
 
 
-def foo(workbook):
+def getAreaValues(workbook):
     #Look into implementing a wrapper/ decorator here. Function body is too big. Look into a generator functional solution.
     wb = load_workbook(workbook)
     ws = wb.active
@@ -23,7 +23,7 @@ def foo(workbook):
         warnings.warn('Warning: Malformed columns', RuntimeWarning)
     if name_idx != 3 or area_idx != 10:
         warnings.warn('Warning: Malformed columns', RuntimeWarning)
-    out = bar(ws, headers, name_idx, area_idx)
+    out = _getValues(ws, headers, name_idx, area_idx)
     j = 0
     for item in [x[1] for x in out]:
         if not isinstance(item, (int, float)):
@@ -39,7 +39,7 @@ def foo(workbook):
     return out
 
 
-def bar(ws, headers, name_idx, area_idx):
+def _getValues(ws, headers, name_idx, area_idx):
     delta = area_idx - name_idx
     if delta >= 0:
         values = [[x[0], x[delta]] if x[delta] is not None or '' else [x[0], 0.0] for x in ws.iter_rows(
