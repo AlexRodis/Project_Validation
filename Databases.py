@@ -279,14 +279,46 @@ class MethodValidationDatabase(Database):
                             if cursor.fetchone() is None:
                                 cursor.execute("INSERT INTO validation (ID, ANALYTE,METHOD) VALUES (:idx , :analyte,:method)",{'idx': idx, 'analyte':analyte ,'method':folder} )
                             idx +=1
+                    connection.close()
         return datasheets
 
-    def _load_base_values(self, datasheets = None):
-        connection = sql.connect('{}.sqlite'.format(self.name))
+    def _loadToDatabase(self, method, values, i, j, k, z):
+        # connection = sql.connect('{}.sqlite'.format(self.name))
+        if '{}.sqlite'.format(self) not in listdir():
+            raise RuntimeError
+        connection = sql.connect('{}.sqlite'.format(self))
         cursor = connection.cursor()
-        for folder in datasheets:
-            
+        c = connection.cursor()
+        col = "{curve}_spike_{idx}_D{d}_{repeat}".format(
+            curve=i, idx=j, d=z, repeat=k)
+        for analyte, val in values:
+            with connection:
+                try:
+                    cursor.execute("SELECT {col} FROM validation WHERE ANALYTE =:analyte AND METHOD = :method".format(
+                        col=col), {'analyte': analyte, 'method': method})
+                except OperationalError:
+                    raise RuntimeError
+                prev = cursor.fetchmany()[0][0]
+                try:
+                    c.execute("UPDATE validation SET {col} = IFNULL(:prev, :val) WHERE ANALYTE = :analyte AND METHOD = :method".format(col=col), {
+                        'prev': prev, 'analyte': analyte, 'method': method, 'val': val})
+                except OperationalError:
+                    raise RuntimeError
+        connection.close()
         return None
+
+
+def _load_base_values(self, datasheets=None):
+    #Look into multithreading insertions
+    for folder in datasheets:
+        for spreadsheet in folder.Spreadsheets:
+            t_dir = self.datapath + '\\' + folder
+            chdir(t_dir)
+            values = Excel.getAreaValues(spreadsheet.name)
+            self._loadToDatabase(values, folder, spreadsheet.i,
+                                 spreadsheet.j, spreadsheet.k, spreadsheet.z)
+    return None
+
 
     def __init__(self, name, team, filepath, datapath, other=None):
         super().__init__(name, team, filepath, datapath)

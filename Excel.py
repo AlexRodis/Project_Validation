@@ -11,7 +11,7 @@ def get_analytes(workbook=None):
 
 
 def getAreaValues(workbook):
-    #Look into implementing a wrapper/ decorator here. Function body is too big. Look into a generator functional solution.
+    #Look into implementing a wrapper/ decorator here.
     wb = load_workbook(workbook)
     ws = wb.active
     try:
