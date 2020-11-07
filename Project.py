@@ -2,6 +2,7 @@ from Databases import MethodValidationDatabase
 import json
 from os import chdir, listdir, getcwd
 from Packages.Utils import JSONAdaptor
+import Computations
 
 global programpath
 
@@ -50,6 +51,7 @@ class Validation(Project):
         return None
 
     def __init__(self, settings=None, root=None):
+        #Look into breaking this up
         super().__init__(settings['project_parameters']['name'], settings['project_parameters']['team'],
                          settings['project_parameters']['datapath'], settings['project_parameters']['filepath'], root)
         self.settings = settings
@@ -65,12 +67,9 @@ class Validation(Project):
         self.set_advanced_validation_settings()
         self.database = MethodValidationDatabase(
             self.name, self.team, self.datapath, self.filepath, other=self)
-        self.moveahead()
-
-    def moveahead(self):
-        self.database.create_table(
-            table='validation', settings=self.settings, to_do=self.to_do)
-
+        #Continue with computations here
+        self.computations = Computations.Validation( self.name, self.filepath, self.datapath, self.database.getDatasheets(), self.to_do, self.settings )
+    
     @staticmethod
     def Save(settings=None, filepath=None):
         settings = JSONAdaptor.pythontojson(settings)

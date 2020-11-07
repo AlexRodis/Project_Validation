@@ -210,15 +210,6 @@ class MethodValidationSettingsScreen(InputUtils):
         Validation(self.root,settings)
     
 
-        # self.curvesformat_fontentry=Entry(self.root.mainframe)
-        # self.curvesformat_fontentry.place(relx=.08,rely=c_title_y+.425)
-        # self.curvesformat_szentry=Entry(self.root.mainframe)
-        # self.curvesformat_szentry.place(relx=.08,rely=c_title_y+.475)
-        # self.curvesformat_fontcolorentry=Entry(self.root.mainframe)
-        # self.curvesformat_fontcolorentry.place(relx=.08,rely=c_title_y+.45)
-        # self.curvesformat_fillentry=Entry(self.root.mainframe)
-        # self.curvesformat_fillentry.place(relx=.08,rely=c_title_y+.5)
-
     def collect_settings(self,settings):
         Format=namedtuple('Format','font,size,font_color,fill')
         settings['advanced_settings']={
@@ -253,21 +244,6 @@ class MethodValidationSettingsScreen(InputUtils):
 
     def add_curve_parameters(self,settings):
         #Adds fields and labels to the screen for curve parameters.
-        # stdcpts=StringVar()
-        # spikecpts=StringVar()
-        # matrixcpts=StringVar()
-        # stdRlvlsentry=StringVar()
-        # stdRrepeatsperlevelentry=StringVar()
-        # stdrlvlsentry=StringVar()
-        # stdrrepeatsperlevelentry=StringVar()
-        # spikeRlvlsentry=StringVar()
-        # spikeRrepeatsperlevelentry=StringVar()
-        # spikerlvlsentry=StringVar()
-        # spikerrepeatsperlevelentry=StringVar()
-        # matrixRlvlsentry=StringVar()
-        # matrixRrepeatsperlevelentry=StringVar()
-        # matrixrlvlsentry=StringVar()
-        # matrixrrepeatsperlevelentry=StringVar()
         c_title_y = 0.15
         self.root.mainframe = Frame(self.root, bg="magenta")
         self.root.mainframe.place(relx=0, rely=0, relwidth=1, relheight=1)

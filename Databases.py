@@ -4,8 +4,9 @@ import Excel
 from Packages.Utils import FileUtils
 from collections import namedtuple
 import re
-import pprint
 import warnings
+import pprint
+from functools import wraps
 
 
 class Database:
@@ -90,12 +91,26 @@ class Database:
         self.create_table(table='team')
         return None
 
+    def __loadResult(self, result = None, table=None):
+        ''' Receives a result to insert to the Database :: result = {"analyte":analyte,"method":method,"tCol":tCol, "val":val} '''
+        connection = sql.connect("{}.sqlite".format(self.name))
+        cursor = connection.cursor()
+        with connection:
+            cursor.execute('UPDATE {table} SET {tCol} =:value WHERE ANALYTE = :analyte AND METHOD = :method'.format(table=table,tCol=result['tCol']), {'analyte':result['analyte'], 'method':result['method']} )
+        connection.close()
+        return None
+
+    def updateEntry(self):
+        pass
+
+
+
 
 class MethodValidationDatabase(Database):
 
-
+    @staticmethod
     def _normalise_to_floats(files):
-        # Convert non-float concentration on filenames to floats, for consistency
+        # Convert non-float concentration on filenames to floats, for consistency. Possible duplicate code from Utils
             out = []
             x = re.compile("[0-9]+(?=_D)")
             for file in files:
@@ -104,10 +119,14 @@ class MethodValidationDatabase(Database):
                 out.append(z)
             return out
 
+    @staticmethod
     def crossValidateFiles(files, settings):
     # Accesses a list of files, given a list of tasks and settings for these tasks, and returns True if files have been found for all settings, and
     # no files found and unaccounted for.
-    # This linear algorithm doesn't scale well. Possibly implement binary search
+    # This linear algorithm doesn't scale well. Possibly implement binary search.
+    #Maximaze code reuse by splitting the concentration-to-index proccess into a sepperate function
+    #Function too big. Loko into a functional approach to the problem
+        files = [x.name for x in files]
         tasks = settings["basic_settings"]
         Reg_files = []
         files = sorted(MethodValidationDatabase._normalise_to_floats(files))
@@ -196,8 +215,47 @@ class MethodValidationDatabase(Database):
                 
             if sentinel_extra_files:
                 return True
+
+    @staticmethod
+    def _fetchFileCoords(settings, file):
+        FileCoords = namedtuple('FileCoords', 'name,i,j,k,z')
+        curve_pattern = re.compile('(STD|Matrix|Spike)(?=_spike_)')
+        repeat_pattern = re.compile('(?<=_D[0-9]_)[0-9]+')
+        day_pattern = re.compile('(?<=_D)[0-9]+(?=_[0-9])')
+        index_pattern = re.compile('(?<=_spike_)([0-9]*\.?[0-9]+)(?=_D[0-9]_[0-9]+)')
+        file_ext = re.compile("\.[A-z]+")
+        try:
+            ext = re.search(file_ext, file).group()
+            if ext != '.xlsx':
+                raise TypeError
+        except AttributeError:
+            raise TypeError
+        try:
+            curve = re.search(curve_pattern, file).group()
+        except AttributeError:
+            raise NameError
+        try:
+            day = re.search(day_pattern, file).group()
+            day = int(day)
+            if (day != 1 and day != 2):
+                raise ValueError
+        except AttributeError:
+            raise TypeError
+        try:
+            repeat = re.search(repeat_pattern, file).group()
+            temp = re.search(index_pattern, file).group()
+        except AttributeError:
+            raise TypeError
+        repeat = int(repeat)
+        temp = float(temp)
+        idx = [x['spike_index'] for x in settings['advanced_settings']['advanced_curve_settings'][curve] if x['spike_level'] == temp][0]
+        if repeat >= 20 or repeat <= 0:
+            raise ValueError
+        return FileCoords(name=file, i=curve, j=idx, k=repeat, z=day)
+
+
     
-    def parse_files(self):
+    def _parse_files(self):
         D = namedtuple("Spreadsheets", ["DirectoryPath", "Spreadsheets", "Method" ])
         chdir(self.datapath)
         dirs = listdir()
@@ -207,24 +265,27 @@ class MethodValidationDatabase(Database):
             chdir(t_dir)
             wbs = FileUtils.select_xlsx(listdir())
             if wbs != []:
-                datasheets.append(D(DirectoryPath = t_dir, Spreadsheets = wbs , Method = folder))
-            
+                v = []
+                for spreadsheet in wbs:
+                    v.append(MethodValidationDatabase._fetchFileCoords(self.settings, spreadsheet))
+                datasheets.append(D(DirectoryPath = t_dir, Spreadsheets = v , Method = folder))
+
             else:
                 raise AttributeError("Attempted to open workbook - found nothing")
         return datasheets,dirs
     
     # For data of multiple instruments, create a data folder and aim datapath var to said folder. Inside create sublfolders, per data batch i.i. ESI+, ESI-,GC Check dirs logic. Need to collect ESI Excel exports to check.
-    #This needs testing. Lack files
+    #Many functions here can be improved with generators
     def load_analytes(self):
         idx = 0
-        datasheets,dirs = self.parse_files()
-        for folder in [next(x.Method for x in datasheets)]:
+        datasheets,_ = self._parse_files()
+        for folder in [x.Method for x in datasheets]:
             dirpath,excels = next(([x.DirectoryPath, x.Spreadsheets] for x in datasheets if x.Method == folder), None)
-            x = MethodValidationDatabase.crossValidateFiles(excels, self.settings)
+            # x = MethodValidationDatabase.crossValidateFiles(excels, self.settings)
             if MethodValidationDatabase.crossValidateFiles(excels, self.settings):
                 for excel in excels:    
                     chdir(dirpath)
-                    analytes = Excel.get_analytes(workbook = excel)
+                    analytes = Excel.get_analytes(workbook = excel.name)
                     chdir(self.filepath)
                     connection = sql.connect("{}.sqlite".format(self.name))
                     cursor = connection.cursor()
@@ -234,16 +295,71 @@ class MethodValidationDatabase(Database):
                             if cursor.fetchone() is None:
                                 cursor.execute("INSERT INTO validation (ID, ANALYTE,METHOD) VALUES (:idx , :analyte,:method)",{'idx': idx, 'analyte':analyte ,'method':folder} )
                             idx +=1
+                    connection.close()
         return datasheets
 
-    def load_base_values(self, workbooks = None):
-        
+    def _loadToDatabase(self, method, values, i, j, k, z):
+        # connection = sql.connect('{}.sqlite'.format(self.name))
+        if '{}.sqlite'.format(self) not in listdir():
+            raise RuntimeError
+        connection = sql.connect('{}.sqlite'.format(self))
+        cursor = connection.cursor()
+        c = connection.cursor()
+        col = "{curve}_spike_{idx}_D{d}_{repeat}".format(
+            curve=i, idx=j, d=z, repeat=k)
+        for analyte, val in values:
+            with connection:
+                try:
+                    cursor.execute("SELECT {col} FROM validation WHERE ANALYTE =:analyte AND METHOD = :method".format(
+                        col=col), {'analyte': analyte, 'method': method})
+                except sql.OperationalError:
+                    raise RuntimeError
+                prev = cursor.fetchmany()[0][0]
+                try:
+                    c.execute("UPDATE validation SET {col} = IFNULL(:prev, :val) WHERE ANALYTE = :analyte AND METHOD = :method".format(col=col), {
+                        'prev': prev, 'analyte': analyte, 'method': method, 'val': val})
+                except sql.OperationalError:
+                    raise RuntimeError
+        connection.close()
+        return None
+
+    @property
+    def getDatasheets(self):
+        return self.datasheets
+
+
+    def getCols(self,func):
+        @wraps
+        def wrapper(self):
+            connection = sql.connect(args[0]+'.sqlite')
+            cursor = connection.cursor()
+            with connection:
+                cursor.execute("PRAGMA table_info(validation)")
+                return func(cursor.fetchall)
+        return wrapper
+
+    @property
+    @getCols
+    def colsGen(cursor):
+        for col in cursor:
+            yield col
+
+
+    def _load_base_values(self, datasheets=None):
+        #Look into multithreading insertions
+        for folder in datasheets:
+            for spreadsheet in folder.Spreadsheets:
+                t_dir = self.datapath + '\\' + folder
+                chdir(t_dir)
+                values = Excel.getAreaValues(spreadsheet.name)
+                self._loadToDatabase(values, folder, spreadsheet.i,
+                                    spreadsheet.j, spreadsheet.k, spreadsheet.z)
         return None
 
     def __init__(self, name, team, filepath, datapath, other=None):
         super().__init__(name, team, filepath, datapath)
         super().create_table(table='validation', settings=other.settings, to_do=other.to_do)
         self.settings = other.settings
-        datasheets = self.load_analytes()
-        self.load_base_values(workbooks = datasheets)
+        self.datasheets = self.load_analytes()
+        self._load_base_values(datasheets = self.datasheets)
         return None
