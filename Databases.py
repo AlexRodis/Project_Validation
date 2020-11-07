@@ -4,8 +4,9 @@ import Excel
 from Packages.Utils import FileUtils
 from collections import namedtuple
 import re
-import pprint
 import warnings
+import pprint
+from functools import wraps
 
 
 class Database:
@@ -90,6 +91,20 @@ class Database:
         self.create_table(table='team')
         return None
 
+    def __loadResult(self, result = None, table=None):
+        ''' Receives a result to insert to the Database :: result = {"analyte":analyte,"method":method,"tCol":tCol, "val":val} '''
+        connection = sql.connect("{}.sqlite".format(self.name))
+        cursor = connection.cursor()
+        with connection:
+            cursor.execute('UPDATE {table} SET {tCol} =:value WHERE ANALYTE = :analyte AND METHOD = :method'.format(table=table,tCol=result['tCol']), {'analyte':result['analyte'], 'method':result['method']} )
+        connection.close()
+        return None
+
+    def updateEntry(self):
+        pass
+
+
+
 
 class MethodValidationDatabase(Database):
 
@@ -110,6 +125,7 @@ class MethodValidationDatabase(Database):
     # no files found and unaccounted for.
     # This linear algorithm doesn't scale well. Possibly implement binary search.
     #Maximaze code reuse by splitting the concentration-to-index proccess into a sepperate function
+    #Function too big. Loko into a functional approach to the problem
         files = [x.name for x in files]
         tasks = settings["basic_settings"]
         Reg_files = []
@@ -262,7 +278,7 @@ class MethodValidationDatabase(Database):
     #Many functions here can be improved with generators
     def load_analytes(self):
         idx = 0
-        datasheets,dirs = self._parse_files()
+        datasheets,_ = self._parse_files()
         for folder in [x.Method for x in datasheets]:
             dirpath,excels = next(([x.DirectoryPath, x.Spreadsheets] for x in datasheets if x.Method == folder), None)
             # x = MethodValidationDatabase.crossValidateFiles(excels, self.settings)
@@ -296,34 +312,54 @@ class MethodValidationDatabase(Database):
                 try:
                     cursor.execute("SELECT {col} FROM validation WHERE ANALYTE =:analyte AND METHOD = :method".format(
                         col=col), {'analyte': analyte, 'method': method})
-                except OperationalError:
+                except sql.OperationalError:
                     raise RuntimeError
                 prev = cursor.fetchmany()[0][0]
                 try:
                     c.execute("UPDATE validation SET {col} = IFNULL(:prev, :val) WHERE ANALYTE = :analyte AND METHOD = :method".format(col=col), {
                         'prev': prev, 'analyte': analyte, 'method': method, 'val': val})
-                except OperationalError:
+                except sql.OperationalError:
                     raise RuntimeError
         connection.close()
         return None
 
+    @property
+    def getDatasheets(self):
+        return self.datasheets
 
-def _load_base_values(self, datasheets=None):
-    #Look into multithreading insertions
-    for folder in datasheets:
-        for spreadsheet in folder.Spreadsheets:
-            t_dir = self.datapath + '\\' + folder
-            chdir(t_dir)
-            values = Excel.getAreaValues(spreadsheet.name)
-            self._loadToDatabase(values, folder, spreadsheet.i,
-                                 spreadsheet.j, spreadsheet.k, spreadsheet.z)
-    return None
 
+    def getCols(self,func):
+        @wraps
+        def wrapper(self):
+            connection = sql.connect(args[0]+'.sqlite')
+            cursor = connection.cursor()
+            with connection:
+                cursor.execute("PRAGMA table_info(validation)")
+                return func(cursor.fetchall)
+        return wrapper
+
+    @property
+    @getCols
+    def colsGen(cursor):
+        for col in cursor:
+            yield col
+
+
+    def _load_base_values(self, datasheets=None):
+        #Look into multithreading insertions
+        for folder in datasheets:
+            for spreadsheet in folder.Spreadsheets:
+                t_dir = self.datapath + '\\' + folder
+                chdir(t_dir)
+                values = Excel.getAreaValues(spreadsheet.name)
+                self._loadToDatabase(values, folder, spreadsheet.i,
+                                    spreadsheet.j, spreadsheet.k, spreadsheet.z)
+        return None
 
     def __init__(self, name, team, filepath, datapath, other=None):
         super().__init__(name, team, filepath, datapath)
         super().create_table(table='validation', settings=other.settings, to_do=other.to_do)
         self.settings = other.settings
-        datasheets = self.load_analytes()
-        self._load_base_values(workbooks = datasheets)
+        self.datasheets = self.load_analytes()
+        self._load_base_values(datasheets = self.datasheets)
         return None

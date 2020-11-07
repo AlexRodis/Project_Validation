@@ -1,0 +1,398 @@
+{
+    'project_parameters': {
+        'name': 'Pesticides in Honey',
+        'team': ('Κατερίνα Κορωνία', ' Αλέξανδρος Ρόδης', ' Αποστόλης Καραγιαννίδης', 'Γιώργος Κουλής', ' Νικόλαος Θωμαΐδης'),
+        'datapath': 'H:\\Pesticides Honey\\Results\\GC\\Method Validation\\Excel Exports',
+        'filepath': 'C:\\Users\\User\\Desktop\\HoneyPesticides'
+    },
+    'basic_settings': [Base_Parameters(Curve = '0', Repeatability = False, Reproducibility = False), Base_Parameters(Curve = 'Spike', Repeatability = True, Reproducibility = True), Base_Parameters(Curve = 'Matrix', Repeatability = False, Reproducibility = False)],
+    'advanced_settings': {
+        'advanced_curve_settings': {
+            'STD': [{
+                'spike_index': 1,
+                'spike_level': 2.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [True, 3],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 2,
+                'spike_level': 3.0,
+                'Is_In_Curve': False,
+                'RepeatabilityandRepeats': [False, None],
+                'InterLabReproducibilityandRepeats': [True, 2]
+            }, {
+                'spike_index': 3,
+                'spike_level': 5.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [False, None],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 4,
+                'spike_level': 20.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [True, 3],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 5,
+                'spike_level': 50.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [False, None],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 6,
+                'spike_level': 100.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [True, 3],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }],
+            'Spike': [{
+                'spike_index': 1,
+                'spike_level': 2.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [True, 3],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 2,
+                'spike_level': 3.0,
+                'Is_In_Curve': False,
+                'RepeatabilityandRepeats': [False, None],
+                'InterLabReproducibilityandRepeats': [True, 2]
+            }, {
+                'spike_index': 3,
+                'spike_level': 5.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [False, None],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 4,
+                'spike_level': 20.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [True, 3],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 5,
+                'spike_level': 50.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [False, None],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 6,
+                'spike_level': 100.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [True, 3],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }],
+            'Matrix': [{
+                'spike_index': 1,
+                'spike_level': 2.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [True, 3],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 2,
+                'spike_level': 3.0,
+                'Is_In_Curve': False,
+                'RepeatabilityandRepeats': [False, None],
+                'InterLabReproducibilityandRepeats': [True, 2]
+            }, {
+                'spike_index': 3,
+                'spike_level': 5.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [False, None],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 4,
+                'spike_level': 20.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [True, 3],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 5,
+                'spike_level': 50.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [False, None],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }, {
+                'spike_index': 6,
+                'spike_level': 100.0,
+                'Is_In_Curve': True,
+                'RepeatabilityandRepeats': [True, 3],
+                'InterLabReproducibilityandRepeats': [False, None]
+            }]
+        },
+        'format_settings': {
+            'curve_headings': None,
+            'analyte_heading': Format(font = 'Times New Roman', size = '', font_color = 'Black', fill = 'None'),
+            'column_heading': Format(font = 'Times New Roman', size = '12', font_color = 'Black', fill = 'None'),
+            'data_headings': None,
+            'sample': None,
+            'blanc': None,
+            'curve_heading': Format(font = 'Times New Roman', size = '13', font_color = 'Black', fill = 'None'),
+            'data_heading': Format(font = 'Times New Roman', size = '10', font_color = 'Black', fill = 'None'),
+            'sample_heading': Format(font = '', size = '', font_color = '', fill = ''),
+            'blank_heading': Format(font = 'Times New Roman', size = '13', font_color = 'Black', fill = 'None')
+        }
+    }
+}
+
+========================================================================================================================================================================
+
+{
+  'project_parameters': {
+    'name': 'Pesticides in Honey',
+    'team': ('Κατερίνα Κορωνία', ' Αλέξανδρος Ρόδης', ' Αποστόλης Καραγιαννίδης', 'Γιώργος Κουλής', ' Νικόλαος Θωμαΐδης'),
+    'datapath': 'H:\\Pesticides Honey\\Results\\GC\\Method Validation\\Excel Exports',
+    'filepath': 'C:\\Users\\User\\Desktop\\HoneyPesticides'
+  },
+  'basic_settings': [Base_Parameters(Curve = 'STD', Repeatability = False, Reproducibility = False), Base_Parameters(Curve = 'Spike', Repeatability = True, Reproducibility = True), Base_Parameters(Curve = 'Matrix', Repeatability = False, Reproducibility = False)]
+}
+
+==========================================================================================================================================================================
+
+[Base_Parameters(Curve='STD', Repeatability=False, Reproducibility=False), Base_Parameters(Curve='Spike', Repeatability=True, Reproducibility=True), Base_Parameters(Curve='Matrix', Repeatability=False, Reproducibility=False)]
+
+===================================================================================================================================================================================================================
+=================================================================================================================================================================================================================
+=================================================================================================================================================================================================================
+
+{
+  'commandstring': 'CREATE TABLE IF NOT EXISTS validation(',
+  'table': 'validation',
+  'settings': {
+    'basic_settings': [Base_Parameters(Curve = 'STD', Repeatability = False, Reproducibility = False), Base_Parameters(Curve = 'Spike', Repeatability = True, Reproducibility = True), Base_Parameters(Curve = 'Matrix', Repeatability = False, Reproducibility = False)],
+    'advanced_settings': {
+      'advanced_curve_settings': {
+        'STD': [{
+          'spike_index': 1,
+          'spike_level': 2.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [True, 3],
+          'InterLabReproducibilityandRepeats': [True, 3]
+        }, {
+          'spike_index': 2,
+          'spike_level': 5.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [False, None],
+          'InterLabReproducibilityandRepeats': [False, None]
+        }, {
+          'spike_index': 3,
+          'spike_level': 20.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [True, 3],
+          'InterLabReproducibilityandRepeats': [True, 3]
+        }, {
+          'spike_index': 4,
+          'spike_level': 50.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [False, None],
+          'InterLabReproducibilityandRepeats': [False, None]
+        }, {
+          'spike_index': 5,
+          'spike_level': 100.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [True, 3],
+          'InterLabReproducibilityandRepeats': [True, 3]
+        }],
+        'Spike': [{
+          'spike_index': 1,
+          'spike_level': 2.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [True, 3],
+          'InterLabReproducibilityandRepeats': [True, 3]
+        }, {
+          'spike_index': 2,
+          'spike_level': 5.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [False, None],
+          'InterLabReproducibilityandRepeats': [False, None]
+        }, {
+          'spike_index': 3,
+          'spike_level': 20.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [True, 3],
+          'InterLabReproducibilityandRepeats': [True, 3]
+        }, {
+          'spike_index': 4,
+          'spike_level': 50.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [False, None],
+          'InterLabReproducibilityandRepeats': [False, None]
+        }, {
+          'spike_index': 5,
+          'spike_level': 100.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [True, 3],
+          'InterLabReproducibilityandRepeats': [True, 3]
+        }],
+        'Matrix': [{
+          'spike_index': 1,
+          'spike_level': 2.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [True, 3],
+          'InterLabReproducibilityandRepeats': [True, 3]
+        }, {
+          'spike_index': 2,
+          'spike_level': 5.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [False, None],
+          'InterLabReproducibilityandRepeats': [False, None]
+        }, {
+          'spike_index': 3,
+          'spike_level': 20.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [True, 3],
+          'InterLabReproducibilityandRepeats': [True, 3]
+        }, {
+          'spike_index': 4,
+          'spike_level': 50.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [False, None],
+          'InterLabReproducibilityandRepeats': [False, None]
+        }, {
+          'spike_index': 5,
+          'spike_level': 100.0,
+          'Is_In_Curve': True,
+          'RepeatabilityandRepeats': [True, 3],
+          'InterLabReproducibilityandRepeats': [True, 3]
+        }]
+      },
+      'format_settings': {
+        'curve_headings': None,
+        'analyte_heading': ['Times New Roman', '', 'Black', 'None'],
+        'column_heading': ['Times New Roman', '12', 'Black', 'None'],
+        'data_headings': None,
+        'sample': None,
+        'blanc': None,
+        'curve_heading': ['Times New Roman', '13', 'Black', 'None'],
+        'data_heading': ['Times New Roman', '10', 'Black', 'None'],
+        'sample_heading': ['', '', '', ''],
+        'blank_heading': ['Times New Roman', '12', 'Black', 'None']
+      }
+    }
+  },
+  'to_do': [Base_Parameters(Curve = 'STD', Repeatability = False, Reproducibility = False), Base_Parameters(Curve = 'Spike', Repeatability = True, Reproducibility = True), Base_Parameters(Curve = 'Matrix', Repeatability = False, Reproducibility = False)]
+}
+
+===================================================================================================================================================================================================================
+=================================================================================================================================================================================================================
+=================================================================================================================================================================================================================
+
+CREATE TABLE IF NOT EXISTS validation(
+STD_spike_1_D1_1 REAL
+STD_spike_2_D1_1 REAL
+STD_spike_3_D1_1 REAL
+STD_spike_4_D1_1 REAL
+STD_spike_5_D1_1 REAL
+STD_correl_coeff REAL
+STD_standard_error_interept REAL
+STD_LOD REAL
+STD_LOQ REAL
+STD_spike_1_D1_2 REAL
+STD_spike_1_D1_3 REAL
+STD_spike_1_D1_%RSD_r REAL
+STD_spike_3_D1_2 REAL
+STD_spike_3_D1_3 REAL
+STD_spike_3_D1_%RSD_r REAL
+STD_spike_5_D1_2 REAL
+STD_spike_5_D1_3 REAL
+STD_spike_5_D1_%RSD_r REAL
+STD_spike_1_D2_2 REAL
+STD_spike_1_D2_3 REAL
+STD_spike_1_D2_%RSD_r REAL
+STD_spike_1_%RSD_R REAL
+STD_spike_3_D2_2 REAL
+STD_spike_3_D2_3 REAL
+STD_spike_3_D2_%RSD_r REAL
+STD_spike_3_%RSD_R REAL
+STD_spike_5_D2_2 REAL
+STD_spike_5_D2_3 REAL
+STD_spike_5_D2_%RSD_r REAL
+STD_spike_5_%RSD_R REAL
+Spike_spike_1_D1_1 REAL
+Spike_spike_2_D1_1 REAL
+Spike_spike_3_D1_1 REAL
+Spike_spike_4_D1_1 REAL
+Spike_spike_5_D1_1 REAL
+Spike_correl_coeff REAL
+Spike_standard_error_interept REAL
+Spike_LOD REAL
+Spike_LOQ REAL
+Spike_spike_1_D1_2 REAL
+Spike_spike_1_D1_3 REAL
+Spike_spike_1_D1_%RSD_r REAL
+Spike_spike_3_D1_2 REAL
+Spike_spike_3_D1_3 REAL
+Spike_spike_3_D1_%RSD_r REAL
+Spike_spike_5_D1_2 REAL
+Spike_spike_5_D1_3 REAL
+Spike_spike_5_D1_%RSD_r REAL
+Spike_spike_1_D2_2 REAL
+Spike_spike_1_D2_3 REAL
+Spike_spike_1_D2_%RSD_r REAL
+Spike_spike_1_%RSD_R REAL
+Spike_spike_3_D2_2 REAL
+Spike_spike_3_D2_3 REAL
+Spike_spike_3_D2_%RSD_r REAL
+Spike_spike_3_%RSD_R REAL
+Spike_spike_5_D2_2 REAL
+Spike_spike_5_D2_3 REAL
+Spike_spike_5_D2_%RSD_r REAL
+Spike_spike_5_%RSD_R REAL
+Matrix_spike_1_D1_1 REAL
+Matrix_spike_2_D1_1 REAL
+Matrix_spike_3_D1_1 REAL
+Matrix_spike_4_D1_1 REAL
+Matrix_spike_5_D1_1 REAL
+Matrix_correl_coeff REAL
+Matrix_standard_error_interept REAL
+Matrix_LOD REAL
+Matrix_LOQ REAL
+Matrix_spike_1_D1_2 REAL
+Matrix_spike_1_D1_3 REAL
+Matrix_spike_1_D1_%RSD_r REAL
+Matrix_spike_3_D1_2 REAL
+Matrix_spike_3_D1_3 REAL
+Matrix_spike_3_D1_%RSD_r REAL
+Matrix_spike_5_D1_2 REAL
+Matrix_spike_5_D1_3 REAL
+Matrix_spike_5_D1_%RSD_r REAL
+Matrix_spike_1_D2_2 REAL
+Matrix_spike_1_D2_3 REAL
+Matrix_spike_1_D2_%RSD_r REAL
+Matrix_spike_1_%RSD_R REAL
+Matrix_spike_3_D2_2 REAL
+Matrix_spike_3_D2_3 REAL
+Matrix_spike_3_D2_%RSD_r REAL
+Matrix_spike_3_%RSD_R REAL
+Matrix_spike_5_D2_2 REAL
+Matrix_spike_5_D2_3 REAL
+Matrix_spike_5_D2_%RSD_r REAL
+Matrix_spike_5_%RSD_R REAL)
+
+
+
+{'basic_settings': [Base_Parameters(Curve='STD', Repeatability=False, Reproducibility=False), Base_Parameters(Curve='Spike', Repeatability=True, Reproducibility=True), Base_Parameters(Curve='Matrix', Repeatability=False, Reproducibility=False)], 'advanced_settings': {'advanced_curve_settings': {'STD': [{'spike_index': 1, 'spike_level': 2.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 2, 'spike_level': 5.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 3, 'spike_level': 20.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 4, 'spike_level': 50.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 5, 'spike_level': 100.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}], 'Spike': [{'spike_index': 1, 'spike_level': 2.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 2, 'spike_level': 5.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 3, 'spike_level': 20.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 4, 'spike_level': 
+50.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 5, 'spike_level': 100.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 
+'InterLabReproducibilityandRepeats': [True, 3]}], 'Matrix': [{'spike_index': 1, 'spike_level': 2.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 2, 'spike_level': 5.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 3, 'spike_level': 20.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 4, 'spike_level': 50.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 5, 'spike_level': 100.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}]}, 'format_settings': {'curve_headings': None, 'analyte_heading': ['Times New Roman', '', 'Black', 'None'], 'column_heading': ['Times New Roman', '12', 'Black', 'None'], 'data_headings': None, 'sample': None, 'blanc': None, 'curve_heading': ['Times New Roman', '13', '', 'None'], 'data_heading': ['Times New Roman', '10', 'Black', 'None'], 'sample_heading': ['', '', '', ''], 'blank_heading': ['Times New Roman', '12', 'Black', 'None']}}}
+
+
+files = ['AnalysisResult-Matrix_spike_100_D1_1- 30-7_1-2-52_01_35665541148183501248573.xlsx', 'AnalysisResult-Matrix_spike_20_D1_1_2-43_01_3557582426004149730208.xlsx', 'AnalysisResult-Matrix_spike_2_D1_1_1-2-34_01_35482862550978316498435.xlsx', 'AnalysisResult-Matrix_spike_50_D1_1_1-2-45_01_35598471129927513331927.xlsx', 'AnalysisResult-Matrix_spike_5_D1_1_1-2-36_01_35503152321663749397656.xlsx', 'AnalysisResult-Spike_spike_100_D1_1_1-2-46_01_35608776126364816736992.xlsx', 'AnalysisResult-Spike_spike_100_D1_2_1-2-47_01_35614199095694808886407.xlsx', 'AnalysisResult-Spike_spike_100_D1_3_1-2-48_01_35626554624179951736831.xlsx', 'AnalysisResult-Spike_spike_100_D2_1_1-2-49_01_35632558115917325857338.xlsx', 'AnalysisResult-Spike_spike_100_D2_2_1-2-50_01_35645241487278256928596.xlsx', 'AnalysisResult-Spike_spike_100_D2_3_1-2-51_01_35652962624121570074581.xlsx', 'AnalysisResult-Spike_spike_20_D1_1_1-2-37_01_35512173237202547394165.xlsx', 'AnalysisResult-Spike_spike_20_D1_2_1-2-38_01_35523865011057008711745.xlsx', 'AnalysisResult-Spike_spike_20_D1_3_1-2-39_01_35536925864212110396815.xlsx', 'AnalysisResult-Spike_spike_20_D2_1_1-2-40_01_35544942466644801252596.xlsx', 'AnalysisResult-Spike_spike_20_D2_2_1-2-41_01_35556595747401029359498.xlsx', 'AnalysisResult-Spike_spike_20_D2_3_1-2-42_01_35563864764147739279537.xlsx', 'AnalysisResult-Spike_spike_2_D1_1_1-2-28_01_35426846491803724609464.xlsx', 'AnalysisResult-Spike_spike_2_D1_2_1-2-29_01_35432072883938493805894.xlsx', 'AnalysisResult-Spike_spike_2_D1_3_1-2-33_01_35478064630077674041707.xlsx', 'AnalysisResult-Spike_spike_2_D2_1_1-2-31_01_35453095906085641606338.xlsx', 'AnalysisResult-Spike_spike_2_D2_2_1-2-32_01_35468941882868359324648.xlsx', 'AnalysisResult-Spike_spike_2_D2_3_1-2-30_01_35443423844621753603525.xlsx', 'AnalysisResult-Spike_spike_50_D1_1_1-2-44_01_35589117204869249281469.xlsx', 'AnalysisResult-Spike_spike_5_D1_1_1-2-35_01_35496128102324457118870.xlsx', 'AnalysisResult-STD_spike_100_D1_1_1-2-24_01_35387117994604356508227.xlsx', 'AnalysisResult-STD_spike_20_D1_1_01_35363562938905557863539.xlsx', 'AnalysisResult-STD_spike_2_D1_1_1-2-20_01_35348020723252140148841.xlsx', 'AnalysisResult-STD_spike_50_D1_1_1-2-23_01_35372882004211624713877.xlsx', 'AnalysisResult-STD_spike_5_D1_1_1-2-21_01_35358844413992488810065.xlsx']
+
+
+
+
+
+
+
+
+(ID INT,METHOD TEXT,ANALYTE TEXT,STD_spike_1_D1_1 REAL,STD_spike_2_D1_1 REAL,STD_spike_3_D1_1 REAL,STD_spike_4_D1_1 REAL,STD_spike_5_D1_1 REAL,STD_correl_coeff REAL,STD_standard_error_interept REAL,STD_LOD REAL,STD_LOQ REAL,STD_spike_1_D1_2 REAL,STD_spike_1_D1_3 REAL,STD_spike_1_D1_RSD_r REAL,STD_spike_3_D1_2 REAL,STD_spike_3_D1_3 REAL,STD_spike_3_D1_RSD_r REAL,STD_spike_5_D1_2 REAL,STD_spike_5_D1_3 REAL,STD_spike_5_D1_RSD_r REAL,STD_spike_1_D2_2 REAL,STD_spike_1_D2_3 REAL,STD_spike_1_D2_RSD_r REAL,STD_spike_1_RSD_R REAL,STD_spike_3_D2_2 REAL,STD_spike_3_D2_3 REAL,STD_spike_3_D2_RSD_r REAL,STD_spike_3_RSD_R REAL,STD_spike_5_D2_2 REAL,STD_spike_5_D2_3 REAL,STD_spike_5_D2_RSD_r REAL,STD_spike_5_RSD_R REAL,Spike_spike_1_D1_1 REAL,Spike_spike_2_D1_1 REAL,Spike_spike_3_D1_1 REAL,Spike_spike_4_D1_1 REAL,Spike_spike_5_D1_1 REAL,Spike_correl_coeff REAL,Spike_standard_error_interept REAL,Spike_LOD REAL,Spike_LOQ REAL,Spike_spike_1_D1_2 REAL,Spike_spike_1_D1_3 REAL,Spike_spike_1_D1_RSD_r REAL,Spike_spike_3_D1_2 REAL,Spike_spike_3_D1_3 REAL,Spike_spike_3_D1_RSD_r REAL,Spike_spike_5_D1_2 REAL,Spike_spike_5_D1_3 REAL,Spike_spike_5_D1_RSD_r REAL,Spike_spike_1_D2_2 REAL,Spike_spike_1_D2_3 REAL,Spike_spike_1_D2_RSD_r REAL,Spike_spike_1_RSD_R REAL,Spike_spike_3_D2_2 REAL,Spike_spike_3_D2_3 REAL,Spike_spike_3_D2_RSD_r REAL,Spike_spike_3_RSD_R REAL,Spike_spike_5_D2_2 REAL,Spike_spike_5_D2_3 REAL,Spike_spike_5_D2_RSD_r REAL,Spike_spike_5_RSD_R REAL,Matrix_spike_1_D1_1 REAL,Matrix_spike_2_D1_1 REAL,Matrix_spike_3_D1_1 REAL,Matrix_spike_4_D1_1 REAL,Matrix_spike_5_D1_1 REAL,Matrix_correl_coeff REAL,Matrix_standard_error_interept REAL,Matrix_LOD REAL,Matrix_LOQ REAL,Matrix_spike_1_D1_2 REAL,Matrix_spike_1_D1_3 REAL,Matrix_spike_1_D1_RSD_r REAL,Matrix_spike_3_D1_2 REAL,Matrix_spike_3_D1_3 REAL,Matrix_spike_3_D1_RSD_r REAL,Matrix_spike_5_D1_2 REAL,Matrix_spike_5_D1_3 REAL,Matrix_spike_5_D1_RSD_r REAL,Matrix_spike_1_D2_2 REAL,Matrix_spike_1_D2_3 REAL,Matrix_spike_1_D2_RSD_r REAL,Matrix_spike_1_RSD_R REAL,Matrix_spike_3_D2_2 REAL,Matrix_spike_3_D2_3 REAL,Matrix_spike_3_D2_RSD_r REAL,Matrix_spike_3_RSD_R REAL,Matrix_spike_5_D2_2 REAL,Matrix_spike_5_D2_3 REAL,Matrix_spike_5_D2_RSD_r REAL,Matrix_spike_5_RSD_R REAL)
+
+
+ID INT,METHOD TEXT,ANALYTE TEXT,STD_spike_1_D1_1 REAL,STD_spike_2_D1_1 REAL,STD_spike_3_D1_1 REAL,STD_spike_4_D1_1 REAL,STD_spike_5_D1_1 REAL,STD_correl_coeff REAL,STD_standard_error_interept REAL,STD_LOD REAL,STD_LOQ REAL,STD_spike_1_D1_2 REAL,STD_spike_1_D1_3 REAL,STD_spike_1_D1_RSD_r REAL,STD_spike_3_D1_2 REAL,STD_spike_3_D1_3 REAL,STD_spike_3_D1_RSD_r REAL,STD_spike_5_D1_2 REAL,STD_spike_5_D1_3 REAL,STD_spike_5_D1_RSD_r REAL,STD_spike_1_D2_2 REAL,STD_spike_1_D2_3 REAL,STD_spike_1_D2_RSD_r REAL,STD_spike_1_RSD_R REAL,STD_spike_3_D2_2 REAL,STD_spike_3_D2_3 REAL,STD_spike_3_D2_RSD_r REAL,STD_spike_3_RSD_R REAL,STD_spike_5_D2_2 REAL,STD_spike_5_D2_3 REAL,STD_spike_5_D2_RSD_r REAL,STD_spike_5_RSD_R REAL,Spike_spike_1_D1_1 REAL,Spike_spike_2_D1_1 REAL,Spike_spike_3_D1_1 REAL,Spike_spike_4_D1_1 REAL,Spike_correl_coeff REAL,Spike_standard_error_interept REAL,Spike_LOD REAL,Spike_LOQ REAL,Spike_spike_1_D1_2 REAL,Spike_spike_1_D1_3 REAL,Spike_spike_1_D1_RSD_r REAL,Spike_spike_3_D1_2 REAL,Spike_spike_3_D1_3 REAL,Spike_spike_3_D1_RSD_r REAL,Spike_spike_5_D1_2 REAL,Spike_spike_5_D1_3 REAL,Spike_spike_5_D1_RSD_r REAL,Spike_spike_1_D2_2 REAL,Spike_spike_1_D2_3 REAL,Spike_spike_1_D2_RSD_r REAL,Spike_spike_1_RSD_R REAL,Spike_spike_3_D2_2 REAL,Spike_spike_3_D2_3 REAL,Spike_spike_3_D2_RSD_r REAL,Spike_spike_3_RSD_R REAL,Spike_spike_5_D2_2 REAL,Spike_spike_5_D2_3 REAL,Spike_spike_5_D2_RSD_r REAL,Spike_spike_5_RSD_R REAL,Matrix_spike_1_D1_1 REAL,Matrix_spike_2_D1_1 REAL,Matrix_spike_3_D1_1 REAL,Matrix_spike_4_D1_1 REAL,Matrix_spike_5_D1_1 REAL,Matrix_correl_coeff REAL,Matrix_standard_error_interept REAL,Matrix_LOD REAL,Matrix_LOQ REAL,Matrix_spike_1_D1_2 REAL,Matrix_spike_1_D1_3 REAL,Matrix_spike_1_D1_RSD_r REAL,Matrix_spike_3_D1_2 REAL,Matrix_spike_3_D1_3 REAL,Matrix_spike_3_D1_RSD_r REAL,Matrix_spike_5_D1_2 REAL,Matrix_spike_5_D1_3 REAL,Matrix_spike_5_D1_RSD_r REAL,Matrix_spike_1_D2_2 REAL,Matrix_spike_1_D2_3 REAL,Matrix_spike_1_D2_RSD_r REAL,Matrix_spike_1_RSD_R REAL,Matrix_spike_3_D2_2 REAL,Matrix_spike_3_D2_3 REAL,Matrix_spike_3_D2_RSD_r REAL,Matrix_spike_3_RSD_R REAL,Matrix_spike_5_D2_2 REAL,Matrix_spike_5_D2_3 REAL,Matrix_spike_5_D2_RSD_r REAL,Matrix_spike_5_RSD_R REAL
+
+
+
+
+{'advanced_settings': {'advanced_curve_settings': {'STD': [{'spike_index': 1, 'spike_level': 2.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 2, 'spike_level': 5.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 3, 'spike_level': 20.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 4, 'spike_level': 50.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 5, 'spike_level': 100.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}], 'Spike': [{'spike_index': 1, 'spike_level': 2.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 2, 'spike_level': 5.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 3, 'spike_level': 20.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 4, 'spike_level': 
+50.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 5, 'spike_level': 100.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 
+'InterLabReproducibilityandRepeats': [True, 3]}], 'Matrix': [{'spike_index': 1, 'spike_level': 2.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 2, 'spike_level': 5.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 3, 'spike_level': 20.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}, {'spike_index': 4, 'spike_level': 50.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [False, None], 'InterLabReproducibilityandRepeats': [False, None]}, {'spike_index': 5, 'spike_level': 100.0, 'Is_In_Curve': True, 'RepeatabilityandRepeats': [True, 3], 'InterLabReproducibilityandRepeats': [True, 3]}]}}}
