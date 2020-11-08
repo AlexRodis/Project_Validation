@@ -20,19 +20,7 @@ spikeMissingSettings = {'advanced_settings': {'advanced_curve_settings': {'STD':
 gcFiles = files = ['AnalysisResult-Matrix_spike_100_D1_1- 30-7_1-2-52_01_35665541148183501248573.xlsx', 'AnalysisResult-Matrix_spike_20_D1_1_2-43_01_3557582426004149730208.xlsx', 'AnalysisResult-Matrix_spike_2_D1_1_1-2-34_01_35482862550978316498435.xlsx', 'AnalysisResult-Matrix_spike_50_D1_1_1-2-45_01_35598471129927513331927.xlsx', 'AnalysisResult-Matrix_spike_5_D1_1_1-2-36_01_35503152321663749397656.xlsx', 'AnalysisResult-Spike_spike_100_D1_1_1-2-46_01_35608776126364816736992.xlsx', 'AnalysisResult-Spike_spike_100_D1_2_1-2-47_01_35614199095694808886407.xlsx', 'AnalysisResult-Spike_spike_100_D1_3_1-2-48_01_35626554624179951736831.xlsx', 'AnalysisResult-Spike_spike_100_D2_1_1-2-49_01_35632558115917325857338.xlsx', 'AnalysisResult-Spike_spike_100_D2_2_1-2-50_01_35645241487278256928596.xlsx', 'AnalysisResult-Spike_spike_100_D2_3_1-2-51_01_35652962624121570074581.xlsx', 'AnalysisResult-Spike_spike_20_D1_1_1-2-37_01_35512173237202547394165.xlsx', 'AnalysisResult-Spike_spike_20_D1_2_1-2-38_01_35523865011057008711745.xlsx', 'AnalysisResult-Spike_spike_20_D1_3_1-2-39_01_35536925864212110396815.xlsx', 'AnalysisResult-Spike_spike_20_D2_1_1-2-40_01_35544942466644801252596.xlsx', 'AnalysisResult-Spike_spike_20_D2_2_1-2-41_01_35556595747401029359498.xlsx', 'AnalysisResult-Spike_spike_20_D2_3_1-2-42_01_35563864764147739279537.xlsx', 'AnalysisResult-Spike_spike_2_D1_1_1-2-28_01_35426846491803724609464.xlsx', 'AnalysisResult-Spike_spike_2_D1_2_1-2-29_01_35432072883938493805894.xlsx', 'AnalysisResult-Spike_spike_2_D1_3_1-2-33_01_35478064630077674041707.xlsx', 'AnalysisResult-Spike_spike_2_D2_1_1-2-31_01_35453095906085641606338.xlsx', 'AnalysisResult-Spike_spike_2_D2_2_1-2-32_01_35468941882868359324648.xlsx', 'AnalysisResult-Spike_spike_2_D2_3_1-2-30_01_35443423844621753603525.xlsx', 'AnalysisResult-Spike_spike_50_D1_1_1-2-44_01_35589117204869249281469.xlsx', 'AnalysisResult-Spike_spike_5_D1_1_1-2-35_01_35496128102324457118870.xlsx', 'AnalysisResult-STD_spike_100_D1_1_1-2-24_01_35387117994604356508227.xlsx', 'AnalysisResult-STD_spike_20_D1_1_01_35363562938905557863539.xlsx', 'AnalysisResult-STD_spike_2_D1_1_1-2-20_01_35348020723252140148841.xlsx', 'AnalysisResult-STD_spike_50_D1_1_1-2-23_01_35372882004211624713877.xlsx', 'AnalysisResult-STD_spike_5_D1_1_1-2-21_01_35358844413992488810065.xlsx']
 
 
-
-#curve = 'Matrix'
-#expr = map('{}_spike_{}_D1_1'.format, cycle([curve]),(int(x) if x.is_integer() else x for x in seekMatrix))
-#n  next(expr)
-#filtrd = map(lambda clause :list(filter(lambda x: True if clause in x else False  , files))[0], list(expr))
-
-
-#def fus(fc):
-#    def wrapper(**kwargs):
-#        return reduce(lambda x : chain(fc(files = os.listdir(x),trimmedSettings=trimmedSettings,spikeMissingSettings = spikeMissingSettings,matrixMissingSettings=matrixMissingSettings),fc(files = os.listdir(x),trimmedSettings=trimmedSettings,spikeMissingSettings = spikeMissingSettings,matrixMissingSettings=matrixMissingSettings)), kwargs['directories'])        
-#    return wrapper
-
-def fus(func):
+def __fus(func):
     def wrapper(**kwargs):    
         length = len(kwargs['directories'])
         if not length:
@@ -40,21 +28,21 @@ def fus(func):
         elif length == 1:
             return func(**kwargs)
         else:
-            return reduce(lambda x,y: chain(func(files = os.listdir(x), trimmedSettings = kwargs['trimmedSettings'], matrixMissingSettings= kwargs['matrixMissingSettings'], spikeMissingSettings= kwargs['matrixMissingSettings'] ), func(files = os.listdir(y), trimmedSettings = kwargs['trimmedSettings'], matrixMissingSettings= kwargs['matrixMissingSettings'], spikeMissingSettings= kwargs['matrixMissingSettings']) ), kwargs['directories']  )
+            return reduce(lambda x,y: chain(func(files = os.listdir(x), settings=kwargs['settings'] ), func(files = os.listdir(y),settings = kwargs['settings']) ), kwargs['directories']  )
     return wrapper
 
 
 
 
-def ro(func):
+def __ro(func):
     def wrapper(**kwargs):
-        seekMatrix = {x['spike_level'] for x in kwargs['trimmedSettings']['advanced_settings']['advanced_curve_settings']['Spike']}.difference({x['spike_level'] for x in kwargs['matrixMissingSettings']['advanced_settings']['advanced_curve_settings']['Matrix']})
-        seekSpike = {x['spike_level'] for x in kwargs['trimmedSettings']['advanced_settings']['advanced_curve_settings']['Matrix']}.difference({x['spike_level'] for x in kwargs['spikeMissingSettings']['advanced_settings']['advanced_curve_settings']['Spike']})
-        return chain(func(curve = 'Matrix', files =kwargs['files'] , values=seekMatrix),func(curve='Spike',files=files,values=seekSpike))
+        seekMatrix = {x['spike_level'] for x in kwargs['settings']['advanced_settings']['advanced_curve_settings']['Spike']}.difference({x['spike_level'] for x in kwargs['settings']['advanced_settings']['advanced_curve_settings']['Matrix']})
+        seekSpike = {x['spike_level'] for x in kwargs['settings']['advanced_settings']['advanced_curve_settings']['Matrix']}.difference({x['spike_level'] for x in kwargs['settings']['advanced_settings']['advanced_curve_settings']['Spike']})
+        return chain(func(curve = 'Matrix', files =kwargs['files'] , values=seekMatrix),func(curve='Spike',files=kwargs['files'],values=seekSpike))
     return wrapper
-@fus
-@ro
-def dah(directories = None,curve=None ,files=None, values=None,trimmedSettings=None,matrixMissingSettings =None,spikeMissingSettings=None):
+@__fus
+@__ro
+def __dah(directories = None,curve=None ,files=None, values=None,settings=None):
      expr = map('{}_spike_{}_D1_1'.format, cycle([curve]),(int(x) if x.is_integer() else x for x in values))
      return map(lambda clause : list(filter(lambda x : True if clause in x else False, files))[0], list(expr))
 
@@ -69,14 +57,16 @@ def foo(xs):
             break
 
 
-
+def fetchAdditionalRecFiles(settings = None, dirs = None):
+    ''' Simple interface to expose private methods to the outside with a simple API.
+        settings: A dict of settings encoding task to be done
+        dirs: A list of directories to fetch possible files from.
+    '''
+    return __dah(directories = dirs, settings = settings)
 
 t_dirs = ['/media/alexander/Elements/Pesticides Honey/TEST/GC','/media/alexander/Elements/Pesticides Honey/TEST/LC ESI NEG']
-x = dah(directories = t_dirs, trimmedSettings =trimmedSettings,matrixMissingSettings=matrixMissingSettings,spikeMissingSettings=spikeMissingSettings)
-
+x = fetchAdditionalRecFiles(settings = spikeMissingSettings, dirs = t_dirs)
 foo(x)
-#foo(x)
-#foo(y)
 
 
 
